@@ -1,11 +1,10 @@
-'use strict'
 const pdf = require('pdfjs')
 const fs = require('fs')
 
 class PDFMerger {
   constructor (outputFileName) {
     this.outputFileName = outputFileName
-    if (this.outputFileName != null && this.checkFileExist(this.outputFileName)) {
+    if (this.outputFileName != null && this._checkFileExist(this.outputFileName)) {
       console.log('Warning : Output file already exist and will be replaced.')
     }
     this.doc = new pdf.Document()
@@ -13,12 +12,18 @@ class PDFMerger {
 
   add (fileName, pages) {
     try {
-      if (typeof pages === 'undefined' || pages == null) {
-        this.addEntireDocument(fileName, pages)
+      if (typeof pages === 'undefined' || pages === null) {
+        this._addEntireDocument(fileName, pages)
       } else if (Array.isArray(pages)) {
-        this.addGivenPages(fileName, pages.join(','))
-      } else if (pages.toLowerCase().indexOf('to') !== -1) {
-        this.addFromToPage(fileName, pages)
+        this._addGivenPages(fileName, pages)
+      } else if (pages.indexOf(',') > 0) {
+        this._addGivenPages(fileName, pages.replace(/ /g, '').split(','))
+      } else if (pages.toLowerCase().indexOf('to') >= 0) {
+        const span = pages.replace(/ /g, '').split('to')
+        this._addFromToPage(fileName, span[0], span[1])
+      } else if (pages.indexOf('-') >= 0) {
+        const span = pages.replace(/ /g, '').split('-')
+        this._addFromToPage(fileName, span[0], span[1])
       } else {
         console.log('invalid parameter')
       }
@@ -27,7 +32,7 @@ class PDFMerger {
     }
   }
 
-  addEntireDocument (fileName) {
+  _addEntireDocument (fileName) {
     try {
       var src = fs.readFileSync(fileName)
       var ext = new pdf.ExternalDocument(src)
@@ -38,11 +43,9 @@ class PDFMerger {
     }
   }
 
-  addFromToPage (fileName, pages) {
+  _addFromToPage (fileName, from, to) {
     try {
-      var from = pages.replace(/ /g, '').split('to').map(Number)[0]
-      var to = pages.replace(/ /g, '').split('to').map(Number)[1]
-      if (typeof from === 'number' && typeof to === 'number' && from > 0 & to > from) {
+      if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
         for (var i = from; i <= to; i++) {
           var src = fs.readFileSync(fileName)
           var ext = new pdf.ExternalDocument(src)
@@ -57,15 +60,14 @@ class PDFMerger {
     }
   }
 
-  addGivenPages (fileName, pages) {
+  _addGivenPages (fileName, pages) {
     try {
-      var givenPages = pages.split(',').map(Number)
-      if (givenPages.length !== 0) {
-        for (var page in givenPages) {
+      if (pages.length > 0) {
+        for (var page in pages) {
           var src = fs.readFileSync(fileName)
           var ext = new pdf.ExternalDocument(src)
           this.doc.setTemplate(ext)
-          this.doc.addPageOf(givenPages[page], ext)
+          this.doc.addPageOf(pages[page], ext)
         }
       }
     } catch (error) {
@@ -82,11 +84,11 @@ class PDFMerger {
     }
   }
 
-  checkFileExist (fileName) {
+  _checkFileExist (fileName) {
     try {
-      if (fileName != null) {
+      if (fileName) {
         return fs.existsSync(fileName)
-      } else if (this.outputFileName != null) {
+      } else if (this.outputFileName) {
         return fs.existsSync(this.outputFileName)
       } else {
         console.log('Warning : Output file name is not provided. The document is saved under the name : output.pdf ')
