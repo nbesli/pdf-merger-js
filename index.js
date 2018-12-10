@@ -2,7 +2,7 @@
 const pdf = require('pdfjs')
 const fs = require('fs')
 
-class pdfMerger {
+class PDFMerger {
   constructor (outputFileName) {
     this.outputFileName = outputFileName
     if (this.outputFileName != null && this.checkFileExist(this.outputFileName)) {
@@ -98,4 +98,4 @@ class pdfMerger {
   }
 }
 
-module.exports = pdfMerger
+module.exports = PDFMerger
