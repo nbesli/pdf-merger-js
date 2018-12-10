@@ -16,8 +16,12 @@ class PDFMerger {
         this._addEntireDocument(fileName, pages)
       } else if (Array.isArray(pages)) {
         this._addGivenPages(fileName, pages.join(','))
-      } else if (pages.toLowerCase().indexOf('to') !== -1) {
-        this._addFromToPage(fileName, pages)
+      } else if (pages.toLowerCase().indexOf('to') >= 0) {
+        const span = pages.replace(/ /g, '').split('to')
+        this._addFromToPage(fileName, span[0], span[1])
+      } else if (pages.toLowerCase().indexOf('-') >= 0) {
+        const span = pages.replace(/ /g, '').split('-')
+        this._addFromToPage(fileName, span[0], span[1])
       } else {
         console.log('invalid parameter')
       }
@@ -37,10 +41,8 @@ class PDFMerger {
     }
   }
 
-  _addFromToPage (fileName, pages) {
+  _addFromToPage (fileName, from, to) {
     try {
-      var from = pages.replace(/ /g, '').split('to').map(Number)[0]
-      var to = pages.replace(/ /g, '').split('to').map(Number)[1]
       if (typeof from === 'number' && typeof to === 'number' && from > 0 & to > from) {
         for (var i = from; i <= to; i++) {
           var src = fs.readFileSync(fileName)
