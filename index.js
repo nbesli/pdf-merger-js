@@ -5,7 +5,7 @@ const fs = require('fs')
 class PDFMerger {
   constructor (outputFileName) {
     this.outputFileName = outputFileName
-    if (this.outputFileName != null && this.checkFileExist(this.outputFileName)) {
+    if (this.outputFileName != null && this._checkFileExist(this.outputFileName)) {
       console.log('Warning : Output file already exist and will be replaced.')
     }
     this.doc = new pdf.Document()
@@ -14,11 +14,11 @@ class PDFMerger {
   add (fileName, pages) {
     try {
       if (typeof pages === 'undefined' || pages == null) {
-        this.addEntireDocument(fileName, pages)
+        this._addEntireDocument(fileName, pages)
       } else if (Array.isArray(pages)) {
-        this.addGivenPages(fileName, pages.join(','))
+        this._addGivenPages(fileName, pages.join(','))
       } else if (pages.toLowerCase().indexOf('to') !== -1) {
-        this.addFromToPage(fileName, pages)
+        this._addFromToPage(fileName, pages)
       } else {
         console.log('invalid parameter')
       }
@@ -27,7 +27,7 @@ class PDFMerger {
     }
   }
 
-  addEntireDocument (fileName) {
+  _addEntireDocument (fileName) {
     try {
       var src = fs.readFileSync(fileName)
       var ext = new pdf.ExternalDocument(src)
@@ -38,7 +38,7 @@ class PDFMerger {
     }
   }
 
-  addFromToPage (fileName, pages) {
+  _addFromToPage (fileName, pages) {
     try {
       var from = pages.replace(/ /g, '').split('to').map(Number)[0]
       var to = pages.replace(/ /g, '').split('to').map(Number)[1]
@@ -57,7 +57,7 @@ class PDFMerger {
     }
   }
 
-  addGivenPages (fileName, pages) {
+  _addGivenPages (fileName, pages) {
     try {
       var givenPages = pages.split(',').map(Number)
       if (givenPages.length !== 0) {
@@ -82,7 +82,7 @@ class PDFMerger {
     }
   }
 
-  checkFileExist (fileName) {
+  _checkFileExist (fileName) {
     try {
       if (fileName != null) {
         return fs.existsSync(fileName)
