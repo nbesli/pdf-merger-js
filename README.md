@@ -1,17 +1,13 @@
+# Description
 
-#Description
 
 This package is developed only for test purposes. It is developed for merging pdf documents. All the functionalities build on [pdfjs](https://www.npmjs.com/package/pdfjs) package. 
 
 
-#Installation
+# Installation
 `npm i pdf-merger-trvl --save`
 
-#GITHUB 
-[GITHUB repository](https://github.com/nbesli/pdf-merger-trvl)
-
-
-#Code sample
+# Code sample
 
 ```javascript
 const pdfMerger=require('pdf-merger-trvl');
