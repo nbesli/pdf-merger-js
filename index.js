@@ -1,4 +1,3 @@
-'use strict'
 const pdf = require('pdfjs')
 const fs = require('fs')
 
