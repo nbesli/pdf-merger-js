@@ -12,16 +12,16 @@ class PDFMerger {
 
   add (fileName, pages) {
     try {
-      if (typeof pages === 'undefined' || pages == null) {
+      if (typeof pages === 'undefined' || pages === null) {
         this._addEntireDocument(fileName, pages)
       } else if (Array.isArray(pages)) {
         this._addGivenPages(fileName, pages)
-      } else if (pages.toLowerCase().indexOf(',') >= 0) {
-        this._addGivenPages(fileName, pages.split(','))
+      } else if (pages.indexOf(',') > 0) {
+        this._addGivenPages(fileName, pages.replace(/ /g, '').split(','))
       } else if (pages.toLowerCase().indexOf('to') >= 0) {
         const span = pages.replace(/ /g, '').split('to')
         this._addFromToPage(fileName, span[0], span[1])
-      } else if (pages.toLowerCase().indexOf('-') >= 0) {
+      } else if (pages.indexOf('-') >= 0) {
         const span = pages.replace(/ /g, '').split('-')
         this._addFromToPage(fileName, span[0], span[1])
       } else {
@@ -45,7 +45,7 @@ class PDFMerger {
 
   _addFromToPage (fileName, from, to) {
     try {
-      if (typeof from === 'number' && typeof to === 'number' && from > 0 & to > from) {
+      if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
         for (var i = from; i <= to; i++) {
           var src = fs.readFileSync(fileName)
           var ext = new pdf.ExternalDocument(src)
@@ -86,9 +86,9 @@ class PDFMerger {
 
   _checkFileExist (fileName) {
     try {
-      if (fileName != null) {
+      if (fileName) {
         return fs.existsSync(fileName)
-      } else if (this.outputFileName != null) {
+      } else if (this.outputFileName) {
         return fs.existsSync(this.outputFileName)
       } else {
         console.log('Warning : Output file name is not provided. The document is saved under the name : output.pdf ')
