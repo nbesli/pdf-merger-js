@@ -15,7 +15,9 @@ class PDFMerger {
       if (typeof pages === 'undefined' || pages == null) {
         this._addEntireDocument(fileName, pages)
       } else if (Array.isArray(pages)) {
-        this._addGivenPages(fileName, pages.join(','))
+        this._addGivenPages(fileName, pages)
+      } else if (pages.toLowerCase().indexOf(',') >= 0) {
+        this._addGivenPages(fileName, pages.split(','))
       } else if (pages.toLowerCase().indexOf('to') >= 0) {
         const span = pages.replace(/ /g, '').split('to')
         this._addFromToPage(fileName, span[0], span[1])
@@ -60,13 +62,12 @@ class PDFMerger {
 
   _addGivenPages (fileName, pages) {
     try {
-      var givenPages = pages.split(',').map(Number)
-      if (givenPages.length !== 0) {
-        for (var page in givenPages) {
+      if (pages.length > 0) {
+        for (var page in pages) {
           var src = fs.readFileSync(fileName)
           var ext = new pdf.ExternalDocument(src)
           this.doc.setTemplate(ext)
-          this.doc.addPageOf(givenPages[page], ext)
+          this.doc.addPageOf(pages[page], ext)
         }
       }
     } catch (error) {
