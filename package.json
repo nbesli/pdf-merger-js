@@ -1,12 +1,12 @@
 {
-  "name": "pdf-merger-trvl",
-  "version": "1.0.4",
-  "description": "",
+  "name": "pdf-merger-js",
+  "version": "2.0.0",
+  "description": "merge multible PDF documents, or parts of them, to a new PDF document",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "standard": "standard",
-    "standard::fix": "standard --fix"
+    "standard::fix": "standard --fix",
+    "test": "npm run standard"
   },
   "keywords": [
     "pdf",
