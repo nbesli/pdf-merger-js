@@ -16,7 +16,7 @@
   "author": "nbesli",
   "license": "MIT",
   "dependencies": {
-    "pdfjs": "^2.1.0"
+    "pdfjs": "^2.2.0"
   },
   "devDependencies": {
     "standard": "^12.0.1"
