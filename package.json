@@ -8,7 +8,7 @@
     "standard::fix": "standard --fix",
     "test": "npm run standard"
   },
-  "repository": "github:nbesli/pdf-merger-trvl",
+  "repository": "github:nbesli/pdf-merger-js",
   "keywords": [
     "pdf",
     "merge"
