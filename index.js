@@ -75,10 +75,10 @@ class PDFMerger {
     }
   }
 
-  save (fileName) {
+  async save (fileName) {
     try {
       this.doc.pipe(fs.createWriteStream(fileName))
-      this.doc.end()
+      await this.doc.end()
     } catch (error) {
       console.log(error)
     }
