@@ -10,20 +10,20 @@ class PDFMerger {
     this.doc = new pdf.Document()
   }
 
-  add (fileName, pages) {
+  add (inputFile, pages) {
     try {
       if (typeof pages === 'undefined' || pages === null) {
-        this._addEntireDocument(fileName, pages)
+        this._addEntireDocument(inputFile, pages)
       } else if (Array.isArray(pages)) {
-        this._addGivenPages(fileName, pages)
+        this._addGivenPages(inputFile, pages)
       } else if (pages.indexOf(',') > 0) {
-        this._addGivenPages(fileName, pages.replace(/ /g, '').split(','))
+        this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
       } else if (pages.toLowerCase().indexOf('to') >= 0) {
         const span = pages.replace(/ /g, '').split('to')
-        this._addFromToPage(fileName, span[0], span[1])
+        this._addFromToPage(inputFile, span[0], span[1])
       } else if (pages.indexOf('-') >= 0) {
         const span = pages.replace(/ /g, '').split('-')
-        this._addFromToPage(fileName, span[0], span[1])
+        this._addFromToPage(inputFile, span[0], span[1])
       } else {
         console.log('invalid parameter')
       }
@@ -43,11 +43,11 @@ class PDFMerger {
     }
   }
 
-  _addFromToPage (fileName, from, to) {
+  _addFromToPage (inputFile, from, to) {
     try {
       if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
         for (var i = from; i <= to; i++) {
-          var src = fs.readFileSync(fileName)
+          var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
           var ext = new pdf.ExternalDocument(src)
           this.doc.setTemplate(ext)
           this.doc.addPageOf(i, ext)
@@ -60,11 +60,11 @@ class PDFMerger {
     }
   }
 
-  _addGivenPages (fileName, pages) {
+  _addGivenPages (inputFile, pages) {
     try {
       if (pages.length > 0) {
         for (var page in pages) {
-          var src = fs.readFileSync(fileName)
+          var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
           var ext = new pdf.ExternalDocument(src)
           this.doc.setTemplate(ext)
           this.doc.addPageOf(pages[page], ext)
