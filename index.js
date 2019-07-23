@@ -10,69 +10,53 @@ class PDFMerger {
     this.doc = new pdf.Document()
   }
 
-  add (fileName, pages) {
-    try {
-      if (typeof pages === 'undefined' || pages === null) {
-        this._addEntireDocument(fileName, pages)
-      } else if (Array.isArray(pages)) {
-        this._addGivenPages(fileName, pages)
-      } else if (pages.indexOf(',') > 0) {
-        this._addGivenPages(fileName, pages.replace(/ /g, '').split(','))
-      } else if (pages.toLowerCase().indexOf('to') >= 0) {
-        const span = pages.replace(/ /g, '').split('to')
-        this._addFromToPage(fileName, span[0], span[1])
-      } else if (pages.indexOf('-') >= 0) {
-        const span = pages.replace(/ /g, '').split('-')
-        this._addFromToPage(fileName, span[0], span[1])
-      } else {
-        console.log('invalid parameter')
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  add (inputFile, pages) {
+    if (typeof pages === 'undefined' || pages === null) {
+      this._addEntireDocument(inputFile, pages)
+    } else if (Array.isArray(pages)) {
+      this._addGivenPages(inputFile, pages)
+    } else if (pages.indexOf(',') > 0) {
+      this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
+    } else if (pages.toLowerCase().indexOf('to') >= 0) {
+      const span = pages.replace(/ /g, '').split('to')
+      this._addFromToPage(inputFile, span[0], span[1])
+    } else if (pages.indexOf('-') >= 0) {
+      const span = pages.replace(/ /g, '').split('-')
+      this._addFromToPage(inputFile, span[0], span[1])
+    } else {
+      console.log('invalid parameter')
+    }    
   }
 
-  _addEntireDocument (fileName) {
-    try {
-      var src = fs.readFileSync(fileName)
-      var ext = new pdf.ExternalDocument(src)
-      this.doc.setTemplate(ext)
-      this.doc.addPagesOf(ext)
-    } catch (error) {
-      console.log(error)
-    }
+  _addEntireDocument (inputFile) {
+    var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
+    var ext = new pdf.ExternalDocument(src)
+    this.doc.setTemplate(ext)
+    this.doc.addPagesOf(ext)    
   }
 
-  _addFromToPage (fileName, from, to) {
-    try {
-      if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
-        for (var i = from; i <= to; i++) {
-          var src = fs.readFileSync(fileName)
-          var ext = new pdf.ExternalDocument(src)
-          this.doc.setTemplate(ext)
-          this.doc.addPageOf(i, ext)
-        }
-      } else {
-        console.log('invalid function parameter')
+  _addFromToPage (inputFile, from, to) {
+    if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
+      for (var i = from; i <= to; i++) {
+        var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
+        var ext = new pdf.ExternalDocument(src)
+        this.doc.setTemplate(ext)
+        this.doc.addPageOf(i, ext)
       }
-    } catch (error) {
-      console.log(error)
-    }
+    } else {
+      console.log('invalid function parameter')
+    }   
   }
 
-  _addGivenPages (fileName, pages) {
-    try {
-      if (pages.length > 0) {
-        for (var page in pages) {
-          var src = fs.readFileSync(fileName)
-          var ext = new pdf.ExternalDocument(src)
-          this.doc.setTemplate(ext)
-          this.doc.addPageOf(pages[page], ext)
-        }
+  _addGivenPages (inputFile, pages) {
+    if (pages.length > 0) {
+      for (var page in pages) {
+        var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
+        var ext = new pdf.ExternalDocument(src)
+        this.doc.setTemplate(ext)
+        this.doc.addPageOf(pages[page], ext)
       }
-    } catch (error) {
-      console.log(error)
-    }
+    }    
   }
 
   async save (fileName) {
