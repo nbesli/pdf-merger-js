@@ -25,38 +25,38 @@ class PDFMerger {
       this._addFromToPage(inputFile, span[0], span[1])
     } else {
       console.log('invalid parameter')
-    }    
+    }
   }
 
   _addEntireDocument (inputFile) {
-    var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
+    var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
     var ext = new pdf.ExternalDocument(src)
     this.doc.setTemplate(ext)
-    this.doc.addPagesOf(ext)    
+    this.doc.addPagesOf(ext)
   }
 
   _addFromToPage (inputFile, from, to) {
     if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
       for (var i = from; i <= to; i++) {
-        var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
+        var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
         var ext = new pdf.ExternalDocument(src)
         this.doc.setTemplate(ext)
         this.doc.addPageOf(i, ext)
       }
     } else {
       console.log('invalid function parameter')
-    }   
+    }
   }
 
   _addGivenPages (inputFile, pages) {
     if (pages.length > 0) {
       for (var page in pages) {
-        var src = (inputFile instanceof Buffer)?inputFile:fs.readFileSync(inputFile);
+        var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
         var ext = new pdf.ExternalDocument(src)
         this.doc.setTemplate(ext)
         this.doc.addPageOf(pages[page], ext)
       }
-    }    
+    }
   }
 
   async save (fileName) {
