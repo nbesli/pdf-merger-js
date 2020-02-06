@@ -61,8 +61,19 @@ class PDFMerger {
 
   async save (fileName) {
     try {
-      this.doc.pipe(fs.createWriteStream(fileName))
+      var writeSream = this.doc.pipe(fs.createWriteStream(fileName))
       await this.doc.end()
+
+      var writeStreamClosedPromise = new Promise((resolve, reject) => {
+        try {
+          writeSream.on('close', () => resolve(output));
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      return writeStreamClosedPromise;
+
     } catch (error) {
       console.log(error)
     }
