@@ -66,14 +66,13 @@ class PDFMerger {
 
       var writeStreamClosedPromise = new Promise((resolve, reject) => {
         try {
-          writeStream.on('close', () => resolve());
+          writeStream.on('close', () => resolve())
         } catch (e) {
-          reject(e);
+          reject(e)
         }
-      });
+      })
 
-      return writeStreamClosedPromise;
-
+      return writeStreamClosedPromise
     } catch (error) {
       console.log(error)
     }
