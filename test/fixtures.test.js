@@ -28,18 +28,61 @@ describe('PDFMerger', () => {
 		expect(diff).toBeFalsy()
 	})
 
-	test('combine images from multibe books (array)', async () => {
-		const imagesCinderella = [2, 4, 6, 7, 9, 11]
-		const imagesGoodyTwoShoes = [4, 5, 8, 9, 12, 13, 16]
-
+	test('combine pages from multibe books (array)', async () => {
 		var merger = new PDFMerger()
-		merger.add(path.join(FIXTURES_DIR, 'Cinderella.pdf'), imagesCinderella)
-		merger.add(path.join(FIXTURES_DIR, 'GoodyTwoShoes.pdf'), imagesGoodyTwoShoes)
-		await merger.save(path.join(TMP_DIR, 'BookImages.pdf'))
+		const tmpFile = 'MergeDemo1.pdf'
+		merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+		merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), [1, 2, 3])
+		await merger.save(path.join(TMP_DIR, tmpFile))
 
 		diff = await pdfDiff(
-			path.join(FIXTURES_DIR, 'BookImages.pdf'),
-			path.join(TMP_DIR, 'BookImages.pdf')
+			path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+			path.join(TMP_DIR, tmpFile)
+		)
+
+		expect(diff).toBeFalsy()
+	})
+
+	test('combine pages from multibe books (start-end)', async () => {
+		var merger = new PDFMerger()
+		const tmpFile = 'MergeDemo2.pdf'
+		merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+		merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
+		await merger.save(path.join(TMP_DIR, tmpFile))
+
+		diff = await pdfDiff(
+			path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+			path.join(TMP_DIR, tmpFile)
+		)
+
+		expect(diff).toBeFalsy()
+	})
+
+	test('combine pages from multibe books (start - end)', async () => {
+		var merger = new PDFMerger()
+		const tmpFile = 'MergeDemo2.pdf'
+		merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+		merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 - 3')
+		await merger.save(path.join(TMP_DIR, tmpFile))
+
+		diff = await pdfDiff(
+			path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+			path.join(TMP_DIR, tmpFile)
+		)
+
+		expect(diff).toBeFalsy()
+	})
+
+	test('combine pages from multibe books (start to end)', async () => {
+		var merger = new PDFMerger()
+		const tmpFile = 'MergeDemo2.pdf'
+		merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+		merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 to 3')
+		await merger.save(path.join(TMP_DIR, tmpFile))
+
+		diff = await pdfDiff(
+			path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+			path.join(TMP_DIR, tmpFile)
 		)
 
 		expect(diff).toBeFalsy()
