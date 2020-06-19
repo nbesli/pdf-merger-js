@@ -7,7 +7,8 @@
   "scripts": {
     "standard": "standard",
     "standard::fix": "standard --fix",
-    "test": "npm run standard"
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watch --forceExit --detectOpenHandles"
   },
   "repository": "github:nbesli/pdf-merger-js",
   "keywords": [
@@ -20,6 +21,9 @@
     "pdfjs": "^2.3.9"
   },
   "devDependencies": {
+    "fs-extra": "^9.0.0",
+    "jest": "^26.0.1",
+    "pdf-diff": "^0.1.1",
     "standard": "^14.3.4"
   }
 }
