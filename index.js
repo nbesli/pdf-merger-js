@@ -2,11 +2,7 @@ const pdf = require('pdfjs')
 const fs = require('fs')
 
 class PDFMerger {
-  constructor (outputFileName) {
-    this.outputFileName = outputFileName
-    if (this.outputFileName != null && this._checkFileExist(this.outputFileName)) {
-      console.log('Warning : Output file already exist and will be replaced.')
-    }
+  constructor () {
     this.doc = new pdf.Document()
   }
 
@@ -24,14 +20,13 @@ class PDFMerger {
       const span = pages.replace(/ /g, '').split('-')
       this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
     } else {
-      console.error(`invalid parameter pages: "${pages}"`)
+      console.error('invalid parameter "pages"')
     }
   }
 
   _addEntireDocument (inputFile) {
     var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
     var ext = new pdf.ExternalDocument(src)
-    this.doc.setTemplate(ext)
     this.doc.addPagesOf(ext)
   }
 
@@ -75,21 +70,6 @@ class PDFMerger {
       return writeStreamClosedPromise
     } catch (error) {
       console.log(error)
-    }
-  }
-
-  _checkFileExist (fileName) {
-    try {
-      if (fileName) {
-        return fs.existsSync(fileName)
-      } else if (this.outputFileName) {
-        return fs.existsSync(this.outputFileName)
-      } else {
-        console.log('Warning : Output file name is not provided. The document is saved under the name : output.pdf ')
-        return fs.existsSync('output.pdf')
-      }
-    } catch (error) {
-      return false
     }
   }
 }
