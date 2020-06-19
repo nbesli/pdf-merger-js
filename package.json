@@ -1,6 +1,6 @@
 {
   "name": "pdf-merger-js",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "merge multible PDF documents, or parts of them, to a new PDF document",
   "main": "index.js",
   "types": "index.d.ts",
@@ -11,7 +11,9 @@
     "test:watch": "jest --watch --forceExit --detectOpenHandles"
   },
   "standard": {
-    "env": [ "jest" ]
+    "env": [
+      "jest"
+    ]
   },
   "repository": "github:nbesli/pdf-merger-js",
   "keywords": [
