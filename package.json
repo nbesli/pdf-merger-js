@@ -6,9 +6,12 @@
   "types": "index.d.ts",
   "scripts": {
     "standard": "standard",
-    "standard::fix": "standard --fix",
+    "standard:fix": "standard --fix",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch --forceExit --detectOpenHandles"
+  },
+  "standard": {
+    "env": [ "jest" ]
   },
   "repository": "github:nbesli/pdf-merger-js",
   "keywords": [
