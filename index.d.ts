@@ -4,9 +4,9 @@
 
 declare module "pdf-merger-js" {
   declare class PDFMerger {
-    constructor(outputFileName: string);
-    add(inputFile: string, pages: string | string[] | undefined | null): undefined;
-    save(fileName: string): Promise;
+    constructor();
+    add(inputFile: string, pages?: string | string[] | undefined | null): undefined;
+    save(fileName: string): Promise<undefined>;
   }
 
   export = PDFMerger;
