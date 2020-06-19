@@ -19,12 +19,12 @@ class PDFMerger {
       this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
     } else if (pages.toLowerCase().indexOf('to') >= 0) {
       const span = pages.replace(/ /g, '').split('to')
-      this._addFromToPage(inputFile, span[0], span[1])
+      this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
     } else if (pages.indexOf('-') >= 0) {
       const span = pages.replace(/ /g, '').split('-')
-      this._addFromToPage(inputFile, span[0], span[1])
+      this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
     } else {
-      console.log('invalid parameter')
+      console.error(`invalid parameter pages: "${pages}"`)
     }
   }
 
