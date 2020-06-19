@@ -27,7 +27,6 @@ class PDFMerger {
   _addEntireDocument (inputFile) {
     var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
     var ext = new pdf.ExternalDocument(src)
-    this.doc.setTemplate(ext)
     this.doc.addPagesOf(ext)
   }
 
