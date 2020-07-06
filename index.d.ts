@@ -3,7 +3,7 @@
 // Definitions by: Alexander Wunschik <https://github.com/mojoaxel/>
 
 declare module "pdf-merger-js" {
-  declare class PDFMerger {
+  class PDFMerger {
     constructor();
     add(inputFile: string, pages?: string | string[] | undefined | null): undefined;
     save(fileName: string): Promise<undefined>;
