@@ -1,8 +1,8 @@
 # Description
 
-This node.js library can **merge mulible PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdfjs](https://www.npmjs.com/package/pdfjs) so it can run in any javascript-only environement without any external dependencies.
+This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdfjs](https://www.npmjs.com/package/pdfjs) so it can run in any javascript-only environnement **without any external dependencies**.
 
-This library is inspired by the [PHP library PDFMerger](https://github.com/myokyawhtun/PDFMerger) and has a very similay API.
+This library is inspired by the [PHP library PDFMerger](https://github.com/myokyawhtun/PDFMerger) and has a very similar API.
 
 ## Installation
 
