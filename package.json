@@ -26,8 +26,8 @@
     "pdfjs": "^2.3.9"
   },
   "devDependencies": {
-    "fs-extra": "^9.0.0",
-    "jest": "^26.0.1",
+    "fs-extra": "^9.0.1",
+    "jest": "^26.1.0",
     "pdf-diff": "^0.1.1",
     "standard": "^14.3.4"
   }
