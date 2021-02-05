@@ -72,6 +72,10 @@ class PDFMerger {
       console.log(error)
     }
   }
+
+  async saveAsBuffer () {
+    return this.doc.asBuffer()
+  }
 }
 
 module.exports = PDFMerger

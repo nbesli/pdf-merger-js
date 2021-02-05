@@ -7,6 +7,7 @@ declare module "pdf-merger-js" {
     constructor();
     add(inputFile: string | Buffer, pages?: string | string[] | undefined | null): undefined;
     save(fileName: string): Promise<undefined>;
+    saveAsBuffer(): Promise<Buffer>;
   }
 
   export = PDFMerger;
