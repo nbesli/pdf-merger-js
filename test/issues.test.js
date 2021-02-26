@@ -14,7 +14,7 @@ describe('issues', () => {
   })
 
   test('do multiple merges after another (#29)', async () => {
-    var merger = new PDFMerger()
+    const merger = new PDFMerger()
 
     merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
     merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))

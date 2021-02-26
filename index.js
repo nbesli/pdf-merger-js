@@ -32,16 +32,16 @@ class PDFMerger {
   }
 
   _addEntireDocument (inputFile) {
-    var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
-    var ext = new pdf.ExternalDocument(src)
+    const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
+    const ext = new pdf.ExternalDocument(src)
     this.doc.addPagesOf(ext)
   }
 
   _addFromToPage (inputFile, from, to) {
     if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
-      for (var i = from; i <= to; i++) {
-        var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
-        var ext = new pdf.ExternalDocument(src)
+      for (let i = from; i <= to; i++) {
+        const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
+        const ext = new pdf.ExternalDocument(src)
         this.doc.setTemplate(ext)
         this.doc.addPageOf(i, ext)
       }
@@ -52,9 +52,9 @@ class PDFMerger {
 
   _addGivenPages (inputFile, pages) {
     if (pages.length > 0) {
-      for (var page in pages) {
-        var src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
-        var ext = new pdf.ExternalDocument(src)
+      for (const page in pages) {
+        const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
+        const ext = new pdf.ExternalDocument(src)
         this.doc.setTemplate(ext)
         this.doc.addPageOf(pages[page], ext)
       }
@@ -63,11 +63,11 @@ class PDFMerger {
 
   async save (fileName) {
     try {
-      var writeStream = this.doc.pipe(fs.createWriteStream(fileName))
+      const writeStream = this.doc.pipe(fs.createWriteStream(fileName))
       await this.doc.end()
       this._resetDoc()
 
-      var writeStreamClosedPromise = new Promise((resolve, reject) => {
+      const writeStreamClosedPromise = new Promise((resolve, reject) => {
         try {
           writeStream.on('close', () => resolve())
         } catch (e) {
