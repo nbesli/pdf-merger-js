@@ -3,7 +3,7 @@ const fs = require('fs')
 
 class PDFMerger {
   constructor () {
-    this.doc = new pdf.Document()
+    this._resetDoc()
   }
 
   add (inputFile, pages) {
@@ -22,6 +22,13 @@ class PDFMerger {
     } else {
       console.error('invalid parameter "pages"')
     }
+  }
+
+  _resetDoc () {
+    if (this.doc) {
+      delete this.doc
+    }
+    this.doc = new pdf.Document()
   }
 
   _addEntireDocument (inputFile) {
@@ -58,6 +65,7 @@ class PDFMerger {
     try {
       var writeStream = this.doc.pipe(fs.createWriteStream(fileName))
       await this.doc.end()
+      this._resetDoc()
 
       var writeStreamClosedPromise = new Promise((resolve, reject) => {
         try {
