@@ -23,7 +23,7 @@
   "author": "nbesli",
   "license": "MIT",
   "dependencies": {
-    "pdfjs": "^2.4.2"
+    "pdfjs": "^2.4.3"
   },
   "devDependencies": {
     "fs-extra": "^9.1.0",
