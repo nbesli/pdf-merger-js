@@ -39,17 +39,19 @@ class PDFMerger {
   }
 
   async _getInputFile(inputFile) {
-    if (inputFile instanceof Buffer) {
-      return inputFile;
-    } else {
-      const fileReader = new FileReader();
+    return new Promise((resolve) => {
+      if (inputFile instanceof Buffer) {
+        resolve(inputFile);
+      } else {
+        const fileReader = new FileReader();
 
-      fileReader.onload = function (evt) {
-        return fileReader.result;
-      };
+        fileReader.onload = function (evt) {
+          resolve(fileReader.result);
+        };
 
-      fileReader.readAsArrayBuffer(inputFile);
-    }
+        fileReader.readAsArrayBuffer(inputFile);
+      }
+    });
   }
 
   async _addEntireDocument(inputFile) {
