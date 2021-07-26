@@ -1,4 +1,4 @@
-const pdf = require("pdfjs");
+const pdf = require('pdfjs');
 
 class PDFMerger {
   constructor() {
@@ -6,21 +6,21 @@ class PDFMerger {
   }
 
   add(inputFile, pages) {
-    if (typeof pages === "undefined" || pages === null) {
+    if (typeof pages === 'undefined' || pages === null) {
       return this._addEntireDocument(inputFile, pages);
     } else if (Array.isArray(pages)) {
       return this._addGivenPages(inputFile, pages);
-    } else if (pages.indexOf(",") > 0) {
-      return this._addGivenPages(inputFile, pages.replace(/ /g, "").split(","));
-    } else if (pages.toLowerCase().indexOf("to") >= 0) {
-      const span = pages.replace(/ /g, "").split("to");
+    } else if (pages.indexOf(',') > 0) {
+      return this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','));
+    } else if (pages.toLowerCase().indexOf('to') >= 0) {
+      const span = pages.replace(/ /g, '').split('to');
       return this._addFromToPage(
         inputFile,
         parseInt(span[0]),
         parseInt(span[1])
       );
-    } else if (pages.indexOf("-") >= 0) {
-      const span = pages.replace(/ /g, "").split("-");
+    } else if (pages.indexOf('-') >= 0) {
+      const span = pages.replace(/ /g, '').split('-');
       return this._addFromToPage(
         inputFile,
         parseInt(span[0]),
@@ -61,8 +61,8 @@ class PDFMerger {
 
   async _addFromToPage(inputFile, from, to) {
     if (
-      typeof from === "number" &&
-      typeof to === "number" &&
+      typeof from === 'number' &&
+      typeof to === 'number' &&
       from > 0 &&
       to > from
     ) {
@@ -80,7 +80,7 @@ class PDFMerger {
         pages.map(async (page) => this.doc.addPageOf(page, ext))
       );
     } else {
-      console.log("invalid function parameter");
+      console.log('invalid function parameter');
     }
   }
 
@@ -113,7 +113,7 @@ class PDFMerger {
   async save(fileName) {
     const blob = await this.saveAsBlob();
 
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = `${fileName}.pdf`;
     link.click();
