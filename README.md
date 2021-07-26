@@ -16,7 +16,7 @@ const PDFMerger = require('pdf-merger-js');
 var merger = new PDFMerger();
 
 (async () => {
-  merger.add('pdf1.pdf'); //merge all pages. parameter is the path to file and filename.
+  merger.add('pdf1.pdf');  //merge all pages. parameter is the path to file and filename.
   merger.add('pdf2.pdf', [2]); // merge only page 2
   merger.add('pdf2.pdf', [1, 3]); // merge the pages 1 and 3
   merger.add('pdf2.pdf', '4, 7, 8'); // merge the pages 4, 7 and 8
