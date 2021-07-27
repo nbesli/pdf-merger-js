@@ -53,7 +53,7 @@ class PDFMerger {
 
         fileReader.readAsArrayBuffer(inputFile)
       } else {
-        throw new Error('pdf must be represented as a Buffer, Url, File, or Blob')
+        throw new Error('pdf must be represented as an ArrayBuffer, Blob, Buffer, File, or URL')
       }
     })
   }
