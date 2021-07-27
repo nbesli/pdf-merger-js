@@ -3,7 +3,6 @@ const pdf = require('pdfjs')
 class PDFMerger {
   constructor () {
     this._resetDoc()
-    console.log('linked version')
   }
 
   add (inputFile, pages) {
@@ -57,7 +56,6 @@ class PDFMerger {
 
   async _addEntireDocument (inputFile) {
     const src = await this._getInputFile(inputFile)
-    console.log(src)
     const ext = new pdf.ExternalDocument(src)
 
     return this.doc.addPagesOf(ext)
