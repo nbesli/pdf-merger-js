@@ -39,10 +39,23 @@ class PDFMerger {
   }
 
   async _getInputFile (inputFile) {
-    return new Promise((resolve) => {
-      if (inputFile instanceof Buffer) {
+    return new Promise(async (resolve) => {
+      if (inputFile instanceof Buffer || inputFile instanceof ArrayBuffer) {
         resolve(inputFile)
-      } else {
+      }
+      else if (typeof(inputFile) === 'string' || inputFile instanceof String) {
+        // Check if valid url before attempting to fetch
+        // http, https, blob, and data urls will pass this but so will javascript:xxxx
+        try {
+          new URL(inputFile)
+        } catch {
+          throw new Error(`string ${inputFile} is not a valid url`);
+        }
+        
+        const file = await (await fetch(inputFile)).arrayBuffer()
+        resolve(file)
+      }
+      else if (inputFile instanceof File || inputFile instanceof Blob) {
         const fileReader = new window.FileReader()
 
         fileReader.onload = function (evt) {
@@ -50,6 +63,9 @@ class PDFMerger {
         }
 
         fileReader.readAsArrayBuffer(inputFile)
+      }
+      else {
+        throw new Error("pdf must be represented as a Buffer, Url, File, or Blob")
       }
     })
   }

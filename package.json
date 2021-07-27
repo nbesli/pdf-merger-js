@@ -28,6 +28,7 @@
   "devDependencies": {
     "fs-extra": "^10.0.0",
     "jest": "^27.0.6",
+    "isomorphic-fetch": "^3.0.0",
     "pdf-diff": "^0.1.1",
     "standard": "^16.0.3"
   }
