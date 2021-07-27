@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const pdfDiff = require('pdf-diff')
-global.fetch = require('isomorphic-fetch');
+global.fetch = require('isomorphic-fetch')
 
 const PDFMerger = require('../browser')
 
@@ -144,10 +144,10 @@ describe('PDFMerger', () => {
     const merger = new PDFMerger()
 
     await merger.add(
-      "https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_A.pdf"
+      'https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_A.pdf'
     )
     await merger.add(
-      "https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_B.pdf"
+      'https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_B.pdf'
     )
 
     const buffer = await merger.saveAsBuffer()
