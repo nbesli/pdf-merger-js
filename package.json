@@ -7,8 +7,9 @@
   "scripts": {
     "standard": "standard",
     "standard:fix": "standard --fix",
-    "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watch --forceExit --detectOpenHandles"
+    "test": "jest --testPathIgnorePatterns 'performance.test.js' --detectOpenHandles",
+    "test:watch": "jest --testPathIgnorePatterns 'performance.test.js' --watch --forceExit --detectOpenHandles",
+    "test:performance": "node --expose-gc ./node_modules/.bin/jest --runInBand --detectOpenHandles performance.test.js"
   },
   "standard": {
     "env": [

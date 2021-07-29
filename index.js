@@ -39,10 +39,11 @@ class PDFMerger {
 
   _addFromToPage (inputFile, from, to) {
     if (typeof from === 'number' && typeof to === 'number' && from > 0 && to > from) {
+      const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
+      const ext = new pdf.ExternalDocument(src)
+      this.doc.setTemplate(ext)
+
       for (let i = from; i <= to; i++) {
-        const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
-        const ext = new pdf.ExternalDocument(src)
-        this.doc.setTemplate(ext)
         this.doc.addPageOf(i, ext)
       }
     } else {
@@ -52,10 +53,11 @@ class PDFMerger {
 
   _addGivenPages (inputFile, pages) {
     if (pages.length > 0) {
+      const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
+      const ext = new pdf.ExternalDocument(src)
+      this.doc.setTemplate(ext)
+
       for (const page in pages) {
-        const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
-        const ext = new pdf.ExternalDocument(src)
-        this.doc.setTemplate(ext)
         this.doc.addPageOf(pages[page], ext)
       }
     }
