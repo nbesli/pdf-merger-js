@@ -5,7 +5,7 @@ class PDFMerger {
     this._resetDoc()
   }
 
-  add (inputFile, pages) {
+  async add (inputFile, pages) {
     if (typeof pages === 'undefined' || pages === null) {
       return this._addEntireDocument(inputFile, pages)
     } else if (Array.isArray(pages)) {
@@ -39,23 +39,23 @@ class PDFMerger {
   }
 
   async _getInputFile (inputFile) {
-    return new Promise((resolve) => {
       if (inputFile instanceof Buffer || inputFile instanceof ArrayBuffer) {
-        resolve(inputFile)
+        return inputFile
       } else if (typeof inputFile === 'string' || inputFile instanceof String) {
-        window.fetch(inputFile).then(res => res.arrayBuffer()).then(resolve)
+        const res = await window.fetch(inputFile)
+        const ab = await res.arrayBuffer()
+        return ab
       } else if (inputFile instanceof window.File || inputFile instanceof window.Blob) {
         const fileReader = new window.FileReader()
 
         fileReader.onload = function (evt) {
-          resolve(fileReader.result)
+          return fileReader.result
         }
 
         fileReader.readAsArrayBuffer(inputFile)
       } else {
         throw new Error('pdf must be represented as an ArrayBuffer, Blob, Buffer, File, or URL')
       }
-    })
   }
 
   async _addEntireDocument (inputFile) {
