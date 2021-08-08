@@ -39,29 +39,29 @@ class PDFMerger {
   }
 
   async _getInputFile (inputFile) {
-      if (inputFile instanceof Buffer || inputFile instanceof ArrayBuffer) {
-        return inputFile
-      }
-      if (typeof inputFile === 'string' || inputFile instanceof String) {
-        const res = await window.fetch(inputFile)
-        const ab = await res.arrayBuffer()
-        return ab
-      }
-      if (inputFile instanceof window.File) {
-        const fileReader = new window.FileReader()
+    if (inputFile instanceof Buffer || inputFile instanceof ArrayBuffer) {
+      return inputFile
+    }
+    if (typeof inputFile === 'string' || inputFile instanceof String) {
+      const res = await window.fetch(inputFile)
+      const ab = await res.arrayBuffer()
+      return ab
+    }
+    if (inputFile instanceof window.File) {
+      const fileReader = new window.FileReader()
 
-        fileReader.onload = function (evt) {
-          return fileReader.result
-        }
-
-        fileReader.readAsArrayBuffer(inputFile)
+      fileReader.onload = function (evt) {
+        return fileReader.result
       }
 
-      if (inputFile instanceof window.Blob) {
-        return await inputFile.arrayBuffer()
-      }
+      fileReader.readAsArrayBuffer(inputFile)
+    }
 
-      throw new Error('pdf must be represented as an ArrayBuffer, Blob, Buffer, File, or URL')
+    if (inputFile instanceof window.Blob) {
+      return await inputFile.arrayBuffer()
+    }
+
+    throw new Error('pdf must be represented as an ArrayBuffer, Blob, Buffer, File, or URL')
   }
 
   async _addEntireDocument (inputFile) {
