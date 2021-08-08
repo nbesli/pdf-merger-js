@@ -6,6 +6,7 @@ const path = require("path")
 const fs = require("fs-extra")
 const pdfDiff = require("pdf-diff")
 const url = require(`url`)
+const jsdom = require(`jsdom`)
 /* 
   add a global `windows.fetch` to mock fetch
 */
@@ -46,118 +47,124 @@ describe("PDFMerger", () => {
     fileB = await fs.readFile(path.join(FIXTURES_DIR, "Testfile_B.pdf"))
   })
 
-  // describe("test successful merges", () => {
-  //   test("merge two simple files", async () => {
-  //     const merger = new PDFMerger()
+  describe("test successful merges", () => {
+    test("merge two simple files", async () => {
+      const merger = new PDFMerger()
 
-  //     await merger.add(fileA)
-  //     await merger.add(fileB)
+      await merger.add(fileA)
+      await merger.add(fileB)
 
-  //     const buffer = await merger.saveAsBuffer()
-  //     // Write the buffer as a file for pdfDiff
-  //     await fs.writeFile(path.join(TMP_DIR, "Testfile_AB.pdf"), buffer)
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, "Testfile_AB.pdf"), buffer)
 
-  //     const diff = await pdfDiff(
-  //       path.join(FIXTURES_DIR, "Testfile_AB.pdf"),
-  //       path.join(TMP_DIR, "Testfile_AB.pdf")
-  //     )
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, "Testfile_AB.pdf"),
+        path.join(TMP_DIR, "Testfile_AB.pdf")
+      )
 
-  //     expect(diff).toBeFalsy()
-  //   })
+      expect(diff).toBeFalsy()
+    })
 
-  //   test("combine pages from multiple books (array)", async () => {
-  //     const merger = new PDFMerger()
-  //     const tmpFile = "MergeDemo1.pdf"
+    test("combine pages from multiple books (array)", async () => {
+      const merger = new PDFMerger()
+      const tmpFile = "MergeDemo1.pdf"
 
-  //     await merger.add(fileA, [1])
-  //     await merger.add(fileB, [1, 2, 3])
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
+        [1]
+      )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
+        [1, 2, 3]
+      )
 
-  //     const buffer = await merger.saveAsBuffer()
-  //     // Write the buffer as a file for pdfDiff
-  //     await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
 
-  //     const diff = await pdfDiff(
-  //       path.join(FIXTURES_DIR, "MergeDemo.pdf"),
-  //       path.join(TMP_DIR, tmpFile)
-  //     )
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, "MergeDemo.pdf"),
+        path.join(TMP_DIR, tmpFile)
+      )
 
-  //     expect(diff).toBeFalsy()
-  //   })
+      expect(diff).toBeFalsy()
+    })
 
-  //   test("combine pages from multiple books (start-end)", async () => {
-  //     const merger = new PDFMerger()
-  //     const tmpFile = "MergeDemo2.pdf"
+    test("combine pages from multiple books (start-end)", async () => {
+      const merger = new PDFMerger()
+      const tmpFile = "MergeDemo2.pdf"
 
-  //     await merger.add(
-  //       await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
-  //       [1]
-  //     )
-  //     await merger.add(
-  //       await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
-  //       "1-3"
-  //     )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
+        [1]
+      )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
+        "1-3"
+      )
 
-  //     const buffer = await merger.saveAsBuffer()
-  //     // Write the buffer as a file for pdfDiff
-  //     await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
 
-  //     const diff = await pdfDiff(
-  //       path.join(FIXTURES_DIR, "MergeDemo.pdf"),
-  //       path.join(TMP_DIR, tmpFile)
-  //     )
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, "MergeDemo.pdf"),
+        path.join(TMP_DIR, tmpFile)
+      )
 
-  //     expect(diff).toBeFalsy()
-  //   })
+      expect(diff).toBeFalsy()
+    })
 
-  //   test("combine pages from multiple books (start - end)", async () => {
-  //     const merger = new PDFMerger()
-  //     const tmpFile = "MergeDemo2.pdf"
+    test("combine pages from multiple books (start - end)", async () => {
+      const merger = new PDFMerger()
+      const tmpFile = "MergeDemo2.pdf"
 
-  //     await merger.add(
-  //       await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
-  //       [1]
-  //     )
-  //     await merger.add(
-  //       await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
-  //       "1 - 3"
-  //     )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
+        [1]
+      )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
+        "1 - 3"
+      )
 
-  //     const buffer = await merger.saveAsBuffer()
-  //     // Write the buffer as a file for pdfDiff
-  //     await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
 
-  //     const diff = await pdfDiff(
-  //       path.join(FIXTURES_DIR, "MergeDemo.pdf"),
-  //       path.join(TMP_DIR, tmpFile)
-  //     )
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, "MergeDemo.pdf"),
+        path.join(TMP_DIR, tmpFile)
+      )
 
-  //     expect(diff).toBeFalsy()
-  //   })
+      expect(diff).toBeFalsy()
+    })
 
-  //   test("combine pages from multiple books (start to end)", async () => {
-  //     const merger = new PDFMerger()
-  //     const tmpFile = "MergeDemo2.pdf"
+    test("combine pages from multiple books (start to end)", async () => {
+      const merger = new PDFMerger()
+      const tmpFile = "MergeDemo2.pdf"
 
-  //     await merger.add(
-  //       await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
-  //       [1]
-  //     )
-  //     await merger.add(
-  //       await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
-  //       "1 to 3"
-  //     )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "Testfile_AB.pdf")),
+        [1]
+      )
+      await merger.add(
+        await fs.readFile(path.join(FIXTURES_DIR, "UDHR.pdf")),
+        "1 to 3"
+      )
 
-  //     const buffer = await merger.saveAsBuffer()
-  //     // Write the buffer as a file for pdfDiff
-  //     await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, tmpFile), buffer)
 
-  //     const diff = await pdfDiff(
-  //       path.join(FIXTURES_DIR, "MergeDemo.pdf"),
-  //       path.join(TMP_DIR, tmpFile)
-  //     )
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, "MergeDemo.pdf"),
+        path.join(TMP_DIR, tmpFile)
+      )
 
-  //     expect(diff).toBeFalsy()
-  //   })
+      expect(diff).toBeFalsy()
+    })
 
   test("merge pdfs from urls", async () => {
     const merger = new PDFMerger()
@@ -180,7 +187,7 @@ describe("PDFMerger", () => {
 
     expect(diff).toBeFalsy()
   })
-  // })
+  })
 
   describe("test valid inputs", () => {
     test("ensure Buffer can be imported", async () => {
@@ -234,6 +241,37 @@ describe("PDFMerger", () => {
 
       expect(diff).toBeFalsy()
     })
+
+    test("ensure Blob can be imported", async () => {
+      class MockBlob extends Blob {
+        constructor(props) {
+          super(props)
+
+          this.arrayBuffer = async () => {
+              return fileA
+          }
+        }
+      }
+
+      const blobA = new MockBlob([new Uint8Array(fileA, fileA.byteOffset, fileA.length)], {type: `application/pdf`})
+
+      expect(blobA).toBeInstanceOf(Blob)
+
+      const merger = new PDFMerger()
+      await merger.add(blobA)
+      await merger.add(fileB)
+
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, "Testfile_AB.pdf"), buffer)
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, "Testfile_AB.pdf"),
+        path.join(TMP_DIR, "Testfile_AB.pdf")
+      )
+
+      expect(diff).toBeFalsy()
+    })
   })
 
   describe("test invalid inputs", () => {
@@ -241,7 +279,7 @@ describe("PDFMerger", () => {
       const merger = new PDFMerger()
 
       await expect(merger.add("h://google.com")).rejects.toThrow(TypeError)
-      // expect(async () => await merger.add("https://google.com")).toThrow(TypeError)
+      await expect(merger.add("https://google.com")).rejects.toThrow(TypeError)
     })
   })
 
