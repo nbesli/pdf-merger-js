@@ -41,7 +41,9 @@ const Merger = (files) => {
     const render = async () => {
       const merger = new PDFMerger();
 
-      await Promise.all(files.map(async (file) => await merger.add(file)));
+      for(const file of files) {
+        await merger.add(file)
+      }
 
       const mergedPdf = await merger.saveAsBlob();
       const url = URL.createObjectURL(mergedPdf);
