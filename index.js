@@ -55,7 +55,6 @@ class PDFMerger {
     if (pages.length > 0) {
       const src = (inputFile instanceof Buffer) ? inputFile : fs.readFileSync(inputFile)
       const ext = new pdf.ExternalDocument(src)
-      this.doc.setTemplate(ext)
 
       for (const page in pages) {
         this.doc.addPageOf(pages[page], ext)
