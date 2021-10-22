@@ -45,7 +45,7 @@ const Merger = (files) => {
         await merger.add(file)
       }
 
-      const mergedPdf = await merger.saveAsBlob();
+      const mergedPdf = await merger.saveAsBuffer();
       const url = URL.createObjectURL(mergedPdf);
 
       return setMergedPdfUrl(url);
