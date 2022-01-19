@@ -1,4 +1,4 @@
-// Type definitions for pdf-merger-js v3.2.0
+// Type definitions for pdf-merger-js v3.3.2
 // Project: https://github.com/nbesli/pdf-merger-js
 // Definitions by: Alexander Wunschik <https://github.com/mojoaxel/>
 //                 Daniel Hammer <https://github.com/danmhammer/>
