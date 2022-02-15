@@ -2,8 +2,8 @@ const pdf = require('pdfjs')
 const fs = require('fs')
 
 class PDFMerger {
-  constructor () {
-    this._resetDoc()
+  constructor (pdfjsOptions = {}) {
+    this._resetDoc(pdfjsOptions)
   }
 
   add (inputFile, pages) {
@@ -24,11 +24,11 @@ class PDFMerger {
     }
   }
 
-  _resetDoc () {
+  _resetDoc (pdfjsOptions = {}) {
     if (this.doc) {
       delete this.doc
     }
-    this.doc = new pdf.Document()
+    this.doc = new pdf.Document(pdfjsOptions)
   }
 
   _addEntireDocument (inputFile) {
