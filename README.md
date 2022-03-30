@@ -10,7 +10,7 @@ This library is inspired by the [PHP library PDFMerger](https://github.com/myoky
 
 ## Code sample
 
-```javascript
+```js
 const PDFMerger = require('pdf-merger-js');
 
 var merger = new PDFMerger();
@@ -29,7 +29,7 @@ var merger = new PDFMerger();
 
 ### Browser Sample - React
 
-```javascript
+```jsx
 import PDFMerger from 'pdf-merger-js/browser';
 import React, { useEffect, useState } from 'react';
 
