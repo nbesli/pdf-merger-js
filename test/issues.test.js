@@ -25,6 +25,12 @@ describe('issues', () => {
     await merger.save(path.join(TMP_DIR, 'Testfile_BA.pdf'))
   })
 
+  test('merge a compresses pdf (#42)', async () => {
+    const merger = new PDFMerger();
+    merger.add(path.join(FIXTURES_DIR, 'issue-42.pdf'));
+    await merger.save(path.join(TMP_DIR, 'issue-42_merged.pdf'));
+  })
+
   afterAll(async () => {
     await fs.remove(TMP_DIR)
   })
