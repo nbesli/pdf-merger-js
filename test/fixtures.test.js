@@ -16,8 +16,8 @@ describe('PDFMerger', () => {
 
   test('merge two simple files', async () => {
     const merger = new PDFMerger()
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
     await merger.save(path.join(TMP_DIR, 'Testfile_AB.pdf'))
 
     const diff = await pdfDiff(
@@ -31,8 +31,8 @@ describe('PDFMerger', () => {
   test('combine pages from multibe books (array)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo1.pdf'
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
-    merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), [1, 2, 3])
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), [1, 2, 3])
     await merger.save(path.join(TMP_DIR, tmpFile))
 
     const diff = await pdfDiff(
@@ -46,8 +46,8 @@ describe('PDFMerger', () => {
   test('combine pages from multibe books (start-end)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo2.pdf'
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
-    merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
     await merger.save(path.join(TMP_DIR, tmpFile))
 
     const diff = await pdfDiff(
@@ -61,8 +61,8 @@ describe('PDFMerger', () => {
   test('combine pages from multibe books (start - end)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo2.pdf'
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
-    merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 - 3')
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 - 3')
     await merger.save(path.join(TMP_DIR, tmpFile))
 
     const diff = await pdfDiff(
@@ -76,8 +76,8 @@ describe('PDFMerger', () => {
   test('combine pages from multibe books (start to end)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo2.pdf'
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
-    merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 to 3')
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 to 3')
     await merger.save(path.join(TMP_DIR, tmpFile))
 
     const diff = await pdfDiff(

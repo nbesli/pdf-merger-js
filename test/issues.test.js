@@ -16,19 +16,19 @@ describe('issues', () => {
   test('do multiple merges after another (#29)', async () => {
     const merger = new PDFMerger()
 
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
     await merger.save(path.join(TMP_DIR, 'Testfile_AB.pdf'))
 
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
-    merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
     await merger.save(path.join(TMP_DIR, 'Testfile_BA.pdf'))
   })
 
   test('merge a compresses pdf (#42)', async () => {
-    const merger = new PDFMerger();
-    merger.add(path.join(FIXTURES_DIR, 'issue-42.pdf'));
-    await merger.save(path.join(TMP_DIR, 'issue-42_merged.pdf'));
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'issue-42.pdf'))
+    await merger.save(path.join(TMP_DIR, 'issue-42_merged.pdf'))
   })
 
   afterAll(async () => {

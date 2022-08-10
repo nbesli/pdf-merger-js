@@ -5,23 +5,12 @@
 const path = require('path')
 const fs = require('fs-extra')
 const pdfDiff = require('pdf-diff')
+const fetch = require('node-fetch')
 /*
   add a global `windows.fetch` to mock fetch
 */
 global.window.fetch = jest.fn().mockImplementation((requestUrl) => {
-  const URL = require('url').URL
-  try {
-    const url = new URL(requestUrl)
-    if (!['http:', 'https:', 'data-url:', 'blob:'].includes(url.protocol)) {
-      throw TypeError
-    }
-  } catch {
-    throw new TypeError('Failed to Fetch')
-  }
-  if (requestUrl === 'https://google.com') {
-    throw new TypeError('Failed to Fetch')
-  }
-  return Promise.resolve({ arrayBuffer: async () => fs.readFile(path.join(FIXTURES_DIR, 'Testfile_A.pdf')) })
+  return Promise.resolve(fetch(requestUrl))
 })
 
 const PDFMerger = require('../browser')
@@ -275,8 +264,8 @@ describe('PDFMerger', () => {
     test('ensure improper urls cannot be imported', async () => {
       const merger = new PDFMerger()
 
-      await expect(merger.add('h://google.com')).rejects.toThrow(TypeError)
-      await expect(merger.add('https://google.com')).rejects.toThrow(TypeError)
+      await expect(merger.add('h://google.com')).rejects.toThrow(Error)
+      await expect(merger.add('https://google.com')).rejects.toThrow(Error)
     })
   })
 
