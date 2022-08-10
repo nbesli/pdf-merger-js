@@ -24,13 +24,13 @@
   "author": "nbesli",
   "license": "MIT",
   "dependencies": {
-    "pdfjs": "^2.4.7"
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "fs-extra": "^10.0.0",
     "jest": "^27.5.1",
     "jsdom": "^19.0.0",
-    "node-fetch": "^3.2.0",
+    "node-fetch": "^2.6.7",
     "pdf-diff": "^0.1.1",
     "standard": "^16.0.4"
   }

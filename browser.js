@@ -1,117 +1,126 @@
-const pdf = require('pdfjs')
+const { PDFDocument } = require('pdf-lib')
 
 class PDFMerger {
-  constructor (pdfjsOptions = {}) {
-    this._resetDoc(pdfjsOptions)
+  constructor () {
+    this.doc = undefined
   }
 
   async add (inputFile, pages) {
+    await this._ensureDoc()
     if (typeof pages === 'undefined' || pages === null) {
-      return this._addEntireDocument(inputFile, pages)
+      await this._addEntireDocument(inputFile)
     } else if (Array.isArray(pages)) {
-      return this._addGivenPages(inputFile, pages)
+      await this._addGivenPages(inputFile, pages)
     } else if (pages.indexOf(',') > 0) {
-      return this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
+      const aPages = pages.replace(/ /g, '').split(',')
+      await this._addGivenPages(inputFile, aPages)
     } else if (pages.toLowerCase().indexOf('to') >= 0) {
       const span = pages.replace(/ /g, '').split('to')
-      return this._addFromToPage(
-        inputFile,
-        parseInt(span[0]),
-        parseInt(span[1])
-      )
+      const from = parseInt(span[0])
+      const to = parseInt(span[1])
+      await this._addFromToPage(inputFile, from, to)
     } else if (pages.indexOf('-') >= 0) {
       const span = pages.replace(/ /g, '').split('-')
-      return this._addFromToPage(
-        inputFile,
-        parseInt(span[0]),
-        parseInt(span[1])
-      )
+      const from = parseInt(span[0])
+      const to = parseInt(span[1])
+      await this._addFromToPage(inputFile, from, to)
     } else {
-      console.error('invalid parameter "pages"')
+      throw new Error('invalid parameter "pages"')
     }
   }
 
-  _resetDoc (pdfjsOptions = {}) {
-    if (this.doc) {
-      delete this.doc
+  async _ensureDoc () {
+    if (!this.doc) {
+      this.doc = await PDFDocument.create()
     }
-    this.doc = new pdf.Document(pdfjsOptions)
   }
 
-  async _getInputFile (inputFile) {
-    if (inputFile instanceof Buffer || inputFile instanceof ArrayBuffer) {
-      return inputFile
+  async _getInputAsBuffer (input) {
+    if (input instanceof Uint8Array) {
+      return input
     }
-    if (typeof inputFile === 'string' || inputFile instanceof String) {
-      const res = await window.fetch(inputFile)
-      const ab = await res.arrayBuffer()
-      return ab
+
+    if (input instanceof Buffer || input instanceof ArrayBuffer) {
+      return new Uint8Array(input)
     }
-    if (inputFile instanceof window.File) {
+
+    if (typeof input === 'string' || input instanceof String) {
+      try {
+        Boolean(new URL(input))
+      } catch (e) {
+        throw new Error(`This is not a valid url: ${input}`)
+      }
+      const res = await window.fetch(input)
+      const aBuffer = await res.arrayBuffer()
+      return new Uint8Array(aBuffer)
+    }
+
+    if (input instanceof window.File) {
       const fileReader = new window.FileReader()
-
       fileReader.onload = function (evt) {
         return fileReader.result
       }
-
-      fileReader.readAsArrayBuffer(inputFile)
+      fileReader.readAsArrayBuffer(input)
     }
 
-    if (inputFile instanceof window.Blob) {
-      return await inputFile.arrayBuffer()
+    if (input instanceof window.Blob) {
+      const aBuffer = await input.arrayBuffer()
+      return new Uint8Array(aBuffer)
     }
 
-    throw new Error('pdf must be represented as an ArrayBuffer, Blob, Buffer, File, or URL')
+    throw new Error('pdf must be represented as an Buffer, ArrayBuffer, Blob, File, URL or fetchable string')
   }
 
-  async _addEntireDocument (inputFile) {
-    const src = await this._getInputFile(inputFile)
-    const ext = new pdf.ExternalDocument(src)
+  async _addEntireDocument (input) {
+    const src = await this._getInputAsBuffer(input)
+    const srcDoc = await PDFDocument.load(src)
 
-    return this.doc.addPagesOf(ext)
+    const copiedPages = await this.doc.copyPages(srcDoc, srcDoc.getPageIndices())
+    copiedPages.forEach((page) => {
+      this.doc.addPage(page)
+    })
   }
 
   async _addFromToPage (inputFile, from, to) {
-    if (
-      typeof from === 'number' &&
-      typeof to === 'number' &&
-      from > 0 &&
-      to > from
-    ) {
-      const pages = []
-
-      for (let i = from; i <= to; i++) {
-        pages.push(i)
-      }
-
-      const src = await this._getInputFile(inputFile)
-      const ext = new pdf.ExternalDocument(src)
-      this.doc.setTemplate(ext)
-
-      return Promise.all(
-        pages.map(async (page) => this.doc.addPageOf(page, ext))
-      )
-    } else {
-      console.log('invalid function parameter')
+    if (typeof from !== 'number' || typeof to !== 'number' || from < 0 || from < 0) {
+      throw new Error('Invalid function parameter. \'from\' and \'to\' must be possitive \'numbers\'.')
     }
+    if (to < from) {
+      throw new Error('Invalid function parameter. \'to\' must be greater or eaqual to \'from\'.')
+    }
+
+    const src = await this._getInputAsBuffer(inputFile)
+    const srcDoc = await PDFDocument.load(src)
+    const pageCount = srcDoc.getPageCount()
+
+    if (from >= pageCount || to >= pageCount) {
+      throw new Error(`Invalid function parameter. The document has not enought pages. (from:${from}, to:${to}, pages:${pageCount})`)
+    }
+
+    // create a array [2,3,4] with from=2 and to=4
+    const pages = Array.from({ length: (to - from) + 1 }, (_, i) => i + from - 1)
+    const copiedPages = await this.doc.copyPages(srcDoc, pages)
+    copiedPages.forEach((page) => {
+      this.doc.addPage(page)
+    })
   }
 
   async _addGivenPages (inputFile, pages) {
-    if (pages.length > 0) {
-      const src = await this._getInputFile(inputFile)
-      const ext = new pdf.ExternalDocument(src)
-      this.doc.setTemplate(ext)
+    if (pages.length <= 0) return
 
-      return Promise.all(
-        pages.map(async (page) => {
-          this.doc.addPageOf(page, ext)
-        })
-      )
-    }
+    const src = await this._getInputAsBuffer(inputFile)
+    const srcDoc = await PDFDocument.load(src)
+
+    const pagesIndexed1 = pages.map(p => p - 1)
+    const copiedPages = await this.doc.copyPages(srcDoc, pagesIndexed1)
+    copiedPages.forEach((page) => {
+      this.doc.addPage(page)
+    })
   }
 
   async saveAsBuffer () {
-    return this.doc.asBuffer()
+    await this._ensureDoc()
+    return await this.doc.save()
   }
 
   async saveAsBlob () {
