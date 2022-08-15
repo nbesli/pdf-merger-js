@@ -43,6 +43,21 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
+  test('combine pages from multibe books (string - array)', async () => {
+    const merger = new PDFMerger()
+    const tmpFile = 'MergeDemo1.pdf'
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '1')
+    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), [1, 2, 3])
+    await merger.save(path.join(TMP_DIR, tmpFile))
+
+    const diff = await pdfDiff(
+      path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+      path.join(TMP_DIR, tmpFile)
+    )
+
+    expect(diff).toBeFalsy()
+  })
+
   test('combine pages from multibe books (start-end)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo2.pdf'

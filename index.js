@@ -12,6 +12,8 @@ class PDFMerger {
       await this._addEntireDocument(inputFile)
     } else if (Array.isArray(pages)) {
       await this._addGivenPages(inputFile, pages)
+    } else if (pages.toString().trim().match(/^[0-9]+$/)) {
+      await this._addGivenPages(inputFile, new Array(pages))
     } else if (pages.indexOf(',') > 0) {
       await this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
     } else if (pages.toLowerCase().indexOf('to') >= 0) {
