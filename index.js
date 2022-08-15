@@ -4,6 +4,11 @@ const fs = require('fs').promises
 class PDFMerger {
   constructor () {
     this.doc = undefined
+
+    this.loadOptions = {
+      // allow merging of encrypted pdfs (issue #88)
+      ignoreEncryption: true
+    }
   }
 
   async add (inputFile, pages) {
@@ -40,7 +45,7 @@ class PDFMerger {
 
   async _addEntireDocument (input) {
     const src = await this._getInputAsBuffer(input)
-    const srcDoc = await PDFDocument.load(src)
+    const srcDoc = await PDFDocument.load(src, this.loadOptions)
 
     const copiedPages = await this.doc.copyPages(srcDoc, srcDoc.getPageIndices())
     copiedPages.forEach((page) => {
@@ -57,7 +62,7 @@ class PDFMerger {
     }
 
     const src = await this._getInputAsBuffer(input)
-    const srcDoc = await PDFDocument.load(src)
+    const srcDoc = await PDFDocument.load(src, this.loadOptions)
     const pageCount = srcDoc.getPageCount()
 
     if (from >= pageCount || to >= pageCount) {
@@ -77,7 +82,7 @@ class PDFMerger {
     }
 
     const src = await this._getInputAsBuffer(input)
-    const srcDoc = await PDFDocument.load(src)
+    const srcDoc = await PDFDocument.load(src, this.loadOptions)
 
     // switch from indexed 1 to indexed 0
     const pagesIndexed1 = pages.map(p => p - 1)

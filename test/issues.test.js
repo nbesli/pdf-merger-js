@@ -31,6 +31,12 @@ describe('issues', () => {
     await merger.save(path.join(TMP_DIR, 'issue-42_merged.pdf'))
   })
 
+  test('merge a encrypted pdf (#88)', async () => {
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'issue-88.pdf'))
+    await merger.save(path.join(TMP_DIR, 'issue-88_merged.pdf'))
+  })
+
   afterAll(async () => {
     await fs.remove(TMP_DIR)
   })
