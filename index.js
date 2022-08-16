@@ -17,8 +17,8 @@ class PDFMerger {
       await this._addEntireDocument(inputFile)
     } else if (Array.isArray(pages)) {
       await this._addGivenPages(inputFile, pages)
-    } else if (pages.toString().trim().match(/^[0-9]+$/)) {
-      await this._addGivenPages(inputFile, new Array(pages))
+    } else if (typeof pages === 'number') {
+      await this._addGivenPages(inputFile, new Array(pages.toString()))
     } else if (pages.indexOf(',') > 0) {
       await this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
     } else if (pages.toLowerCase().indexOf('to') >= 0) {
@@ -27,6 +27,8 @@ class PDFMerger {
     } else if (pages.indexOf('-') >= 0) {
       const span = pages.replace(/ /g, '').split('-')
       await this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
+    } else if (pages.toString().trim().match(/^[0-9]+$/)) {
+      await this._addGivenPages(inputFile, new Array(pages))
     } else {
       throw new Error('invalid parameter "pages"')
     }
