@@ -1,6 +1,6 @@
 {
   "name": "pdf-merger-js",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "merge multible PDF documents, or parts of them, to a new PDF document",
   "main": "./index.js",
   "types": "./index.d.ts",
