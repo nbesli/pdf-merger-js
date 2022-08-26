@@ -118,6 +118,13 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
+  test('saveAsBuffer returns a Buffer', async () => {
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'))
+    const buffer = await merger.saveAsBuffer()
+    expect(buffer instanceof Buffer).toEqual(true)
+  })
+
   afterAll(async () => {
     await fs.remove(TMP_DIR)
   })

@@ -120,7 +120,8 @@ class PDFMerger {
 
   async saveAsBuffer () {
     await this._ensureDoc()
-    return await this.doc.save()
+    const uInt8Array = await this.doc.save()
+    return Buffer.from(uInt8Array)
   }
 
   async saveAsBlob () {
