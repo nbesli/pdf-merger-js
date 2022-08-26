@@ -33,6 +33,22 @@ describe('PDFMerger', () => {
     fileB = await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
   })
 
+  describe('test return values', () => {
+    test('saveAsBuffer returns a Buffer', async () => {
+      const merger = new PDFMerger()
+      await merger.add(fileA)
+      const buffer = await merger.saveAsBuffer()
+      expect(buffer instanceof Buffer).toEqual(true)
+    })
+
+    test('saveAsBlob returns a Blob', async () => {
+      const merger = new PDFMerger()
+      await merger.add(fileA)
+      const blob = await merger.saveAsBlob()
+      expect(blob instanceof Blob).toEqual(true)
+    })
+  })
+
   describe('test successful merges', () => {
     test('merge two simple files', async () => {
       const merger = new PDFMerger()

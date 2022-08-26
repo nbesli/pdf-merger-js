@@ -12,9 +12,10 @@
     "test:watch": "jest --watch --forceExit --detectOpenHandles"
   },
   "standard": {
-    "env": [
-      "jest"
-    ]
+    "env": {
+      "jest": true,
+      "browser": true
+    }
   },
   "repository": "github:nbesli/pdf-merger-js",
   "keywords": [
