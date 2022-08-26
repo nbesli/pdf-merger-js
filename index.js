@@ -37,6 +37,8 @@ class PDFMerger {
   async _ensureDoc () {
     if (!this.doc) {
       this.doc = await PDFDocument.create()
+      this.doc.setProducer('pdf-merger-js')
+      this.doc.setCreationDate(new Date())
     }
   }
 
