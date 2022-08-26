@@ -132,10 +132,10 @@ class PDFMerger {
   }
 
   async save (fileName) {
-    const blob = await this.saveAsBlob()
+    const dataUri = await this.doc.saveAsBase64({ dataUri: true })
 
     const link = document.createElement('a')
-    link.href = window.URL.createObjectURL(blob)
+    link.href = dataUri
     link.download = `${fileName}.pdf`
     link.click()
   }
