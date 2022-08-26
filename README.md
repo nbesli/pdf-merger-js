@@ -11,7 +11,9 @@ This library is inspired by the [PHP library PDFMerger](https://github.com/myoky
 
 `npm install --save pdf-merger-js`
 
-## Code sample
+## Code samples
+
+### node.js
 
 ```js
 const PDFMerger = require('pdf-merger-js');
