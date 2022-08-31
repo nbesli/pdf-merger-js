@@ -6,9 +6,9 @@
 declare module "pdf-merger-js/browser" {
   class PDFMerger {
     constructor();
-    add(inputFile: string | Uint8Array | ArrayBuffer | Buffer | Blob | File, pages?: string | string[] | undefined | null): Promise<undefined>;
+    add(inputFile: string | Uint8Array | ArrayBuffer | Blob | File, pages?: string | string[] | undefined | null): Promise<undefined>;
     save(fileName: string): Promise<undefined>;
-    saveAsBuffer(): Promise<Buffer>;
+    saveAsBuffer(): Promise<Uint8Array>;
     saveAsBlob(): Promise<Blob>;
   }
 

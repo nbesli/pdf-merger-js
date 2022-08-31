@@ -40,7 +40,7 @@ class PDFMerger {
       return input
     }
 
-    if (input instanceof Buffer || input instanceof ArrayBuffer) {
+    if (input instanceof ArrayBuffer || Object.prototype.toString.call(input) === '[object ArrayBuffer]') {
       return new Uint8Array(input)
     }
 
@@ -68,7 +68,8 @@ class PDFMerger {
       return new Uint8Array(aBuffer)
     }
 
-    throw new Error('pdf must be represented as an Buffer, ArrayBuffer, Blob, File, URL or fetchable string')
+    console.log({ input, inputc: Object.prototype.toString.call(input), ArrayBuffer, eq: input.contructor!==ArrayBuffer })
+    throw new Error('pdf must be represented as an ArrayBuffer, Blob, File, URL or fetchable string')
   }
 
   async _addEntireDocument (input) {
@@ -120,8 +121,7 @@ class PDFMerger {
 
   async saveAsBuffer () {
     await this._ensureDoc()
-    const uInt8Array = await this.doc.save()
-    return Buffer.from(uInt8Array)
+    return await this.doc.save()
   }
 
   async saveAsBlob () {

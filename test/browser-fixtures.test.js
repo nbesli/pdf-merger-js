@@ -23,22 +23,27 @@ jest.setTimeout(100000)
 let fileA
 let fileB
 
+async function readFixtureAsUint8Array (file) {
+  const buffer = await fs.readFile(path.join(FIXTURES_DIR, file))
+  return new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.length)
+}
+
 // Note: The browser tests differ from standard as all files are expected
 // to be generated or fetched before being passed into the merger.
 // For testing, they are retrieved with fs.ReadFile() and then passed in.
 describe('PDFMerger', () => {
   beforeAll(async () => {
     await fs.ensureDir(TMP_DIR)
-    fileA = await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
-    fileB = await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
+    fileA = await readFixtureAsUint8Array('Testfile_A.pdf')
+    fileB = await readFixtureAsUint8Array('Testfile_B.pdf')
   })
 
   describe('test return values', () => {
-    test('saveAsBuffer returns a Buffer', async () => {
+    test('saveAsBuffer returns a Uint8Array', async () => {
       const merger = new PDFMerger()
       await merger.add(fileA)
       const buffer = await merger.saveAsBuffer()
-      expect(buffer instanceof Buffer).toEqual(true)
+      expect(buffer).toBeInstanceOf(Uint8Array)
     })
 
     test('saveAsBlob returns a Blob', async () => {
@@ -73,11 +78,11 @@ describe('PDFMerger', () => {
       const tmpFile = 'MergeDemo1.pdf'
 
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_AB.pdf')),
+        await readFixtureAsUint8Array('Testfile_AB.pdf'),
         [1]
       )
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'UDHR.pdf')),
+        await readFixtureAsUint8Array('UDHR.pdf'),
         [1, 2, 3]
       )
 
@@ -98,11 +103,11 @@ describe('PDFMerger', () => {
       const tmpFile = 'MergeDemo2.pdf'
 
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_AB.pdf')),
+        await readFixtureAsUint8Array('Testfile_AB.pdf'),
         [1]
       )
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'UDHR.pdf')),
+        await readFixtureAsUint8Array('UDHR.pdf'),
         '1-3'
       )
 
@@ -123,11 +128,11 @@ describe('PDFMerger', () => {
       const tmpFile = 'MergeDemo2.pdf'
 
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_AB.pdf')),
+        await readFixtureAsUint8Array('Testfile_AB.pdf'),
         [1]
       )
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'UDHR.pdf')),
+        await readFixtureAsUint8Array('UDHR.pdf'),
         '1 - 3'
       )
 
@@ -148,11 +153,11 @@ describe('PDFMerger', () => {
       const tmpFile = 'MergeDemo2.pdf'
 
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_AB.pdf')),
+        await readFixtureAsUint8Array('Testfile_AB.pdf'),
         [1]
       )
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'UDHR.pdf')),
+        await readFixtureAsUint8Array('UDHR.pdf'),
         '1 to 3'
       )
 
@@ -175,7 +180,7 @@ describe('PDFMerger', () => {
         'https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_A.pdf'
       )
       await merger.add(
-        await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
+        await readFixtureAsUint8Array('Testfile_B.pdf')
       )
 
       const buffer = await merger.saveAsBuffer()
@@ -192,9 +197,9 @@ describe('PDFMerger', () => {
   })
 
   describe('test valid inputs', () => {
-    test('ensure Buffer can be imported', async () => {
-      expect(fileA).toBeInstanceOf(Buffer)
-      expect(fileB).toBeInstanceOf(Buffer)
+    test('ensure Uint8Array can be imported', async () => {
+      expect(fileA).toBeInstanceOf(Uint8Array)
+      expect(fileB).toBeInstanceOf(Uint8Array)
 
       const merger = new PDFMerger()
       await merger.add(fileA)
@@ -213,20 +218,8 @@ describe('PDFMerger', () => {
     })
 
     test('ensure ArrayBuffer can be imported', async () => {
-      function toArrayBuffer (buff) {
-        const arrayBuffer = new ArrayBuffer(buff.length)
-        const typedArray = new Uint8Array(arrayBuffer)
-        for (let i = 0; i < buff.length; ++i) {
-          typedArray[i] = buff[i]
-        }
-        return arrayBuffer
-      }
-
-      const arrayBufferA = toArrayBuffer(fileA)
-      const arrayBufferB = toArrayBuffer(fileB)
-
-      expect(arrayBufferA).toBeInstanceOf(ArrayBuffer)
-      expect(arrayBufferB).toBeInstanceOf(ArrayBuffer)
+      const arrayBufferA = fileA.buffer
+      const arrayBufferB = fileB.buffer
 
       const merger = new PDFMerger()
       await merger.add(arrayBufferA)
@@ -255,7 +248,7 @@ describe('PDFMerger', () => {
         }
       }
 
-      const blobA = new MockBlob([new Uint8Array(fileA, fileA.byteOffset, fileA.length)], { type: 'application/pdf' })
+      const blobA = new MockBlob([fileA], { type: 'application/pdf' })
 
       expect(blobA).toBeInstanceOf(global.Blob)
 
