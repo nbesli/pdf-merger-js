@@ -68,7 +68,7 @@ class PDFMerger {
       return new Uint8Array(aBuffer)
     }
 
-    console.log({ input, inputc: Object.prototype.toString.call(input), ArrayBuffer, eq: input.contructor!==ArrayBuffer })
+    console.log({ input, inputc: Object.prototype.toString.call(input), ArrayBuffer, eq: input.contructor !== ArrayBuffer })
     throw new Error('pdf must be represented as an ArrayBuffer, Blob, File, URL or fetchable string')
   }
 
