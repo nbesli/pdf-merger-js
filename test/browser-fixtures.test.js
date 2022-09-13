@@ -50,7 +50,7 @@ describe('PDFMerger', () => {
       const merger = new PDFMerger()
       await merger.add(fileA)
       const blob = await merger.saveAsBlob()
-      expect(blob instanceof Blob).toEqual(true)
+      expect(blob).toBeInstanceOf(Blob)
     })
   })
 

@@ -11,9 +11,16 @@ This library is inspired by the [PHP library PDFMerger](https://github.com/myoky
 
 `npm install --save pdf-merger-js`
 
-## Code samples
+## Usage
 
 ### node.js
+
+The node.js version has the following export functions:
+
+* `saveAsBuffer` exports a merged pdf as an [Buffer](https://nodejs.org/api/buffer.html).
+* `save` saves the pdf under the given filename.
+
+### async node.js example
 
 ```js
 const PDFMerger = require('pdf-merger-js');
@@ -29,10 +36,22 @@ var merger = new PDFMerger();
   await merger.add('pdf3.pdf', '3-5'); //merge pages 3 to 5 (3,4,5)
 
   await merger.save('merged.pdf'); //save under given name and reset the internal document
+  
+  // Export the merged PDF as a nodejs Buffer
+  // const mergedPdfBuffer = await merger.saveAsBuffer();
+  // fs.writeSync('merged.pdf', mergedPdfBuffer);
 })();
 ```
 
-### Browser Sample - React
+### Browser
+
+The Browser version has the following export functions:
+
+* `saveAsBuffer` exports a merged pdf as an [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array).
+* `saveAsBlob` exports a merged pdf as a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+* `save` starts a file-download directly in the browser.
+
+#### Sample - React
 
 ```jsx
 import PDFMerger from 'pdf-merger-js/browser';

@@ -35,7 +35,7 @@ class PDFMerger {
     }
   }
 
-  async _getInputAsBuffer (input) {
+  async _getInputAsUint8Array (input) {
     if (input instanceof Uint8Array) {
       return input
     }
@@ -73,7 +73,7 @@ class PDFMerger {
   }
 
   async _addEntireDocument (input) {
-    const src = await this._getInputAsBuffer(input)
+    const src = await this._getInputAsUint8Array(input)
     const srcDoc = await PDFDocument.load(src)
 
     const copiedPages = await this.doc.copyPages(srcDoc, srcDoc.getPageIndices())
@@ -90,7 +90,7 @@ class PDFMerger {
       throw new Error('Invalid function parameter. \'to\' must be greater or eaqual to \'from\'.')
     }
 
-    const src = await this._getInputAsBuffer(inputFile)
+    const src = await this._getInputAsUint8Array(inputFile)
     const srcDoc = await PDFDocument.load(src)
     const pageCount = srcDoc.getPageCount()
 
@@ -109,7 +109,7 @@ class PDFMerger {
   async _addGivenPages (inputFile, pages) {
     if (pages.length <= 0) return
 
-    const src = await this._getInputAsBuffer(inputFile)
+    const src = await this._getInputAsUint8Array(inputFile)
     const srcDoc = await PDFDocument.load(src)
 
     const pagesIndexed1 = pages.map(p => p - 1)
