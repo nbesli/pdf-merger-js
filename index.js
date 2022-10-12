@@ -71,7 +71,7 @@ class PDFMerger {
     const srcDoc = await PDFDocument.load(src, this.loadOptions)
     const pageCount = srcDoc.getPageCount()
 
-    if (from >= pageCount || to >= pageCount) {
+    if (from > pageCount || to > pageCount) {
       throw new Error(`Invalid function parameter. The document has not enought pages. (from:${from}, to:${to}, pages:${pageCount})`)
     }
 
