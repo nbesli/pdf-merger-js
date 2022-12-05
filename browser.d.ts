@@ -16,7 +16,7 @@ declare module "pdf-merger-js/browser" {
   export = PDFMerger;
 }
 
-declare class Metadata {
+declare interface Metadata {
   producer?: string
   author?: string
   title?: string

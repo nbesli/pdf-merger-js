@@ -14,7 +14,7 @@ declare module "pdf-merger-js" {
 }
 
 
-declare class Metadata {
+declare interface Metadata {
   producer?: string
   author?: string
   title?: string
