@@ -119,6 +119,14 @@ class PDFMerger {
     })
   }
 
+  async setMetadata(metadata) {
+    await this._ensureDoc()
+    if (metadata.producer) this.doc.setProducer(metadata.producer)
+    if (metadata.author) this.doc.setAuthor(metadata.author)
+    if (metadata.title) this.doc.setTitle(metadata.title)
+    if (metadata.creator) this.doc.setCreator(metadata.creator)
+  }
+
   async saveAsBuffer () {
     await this._ensureDoc()
     return await this.doc.save()

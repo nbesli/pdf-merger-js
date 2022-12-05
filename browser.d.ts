@@ -10,7 +10,15 @@ declare module "pdf-merger-js/browser" {
     save(fileName: string): Promise<undefined>;
     saveAsBuffer(): Promise<Uint8Array>;
     saveAsBlob(): Promise<Blob>;
+    setMetadata(metadata: Metadata): Promise<void>;
   }
 
   export = PDFMerger;
+}
+
+declare class Metadata {
+  producer?: string
+  author?: string
+  title?: string
+  creator?: string
 }
