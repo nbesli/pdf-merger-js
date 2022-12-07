@@ -19,6 +19,7 @@ The node.js version has the following export functions:
 
 * `saveAsBuffer` exports a merged pdf as an [Buffer](https://nodejs.org/api/buffer.html).
 * `save` saves the pdf under the given filename.
+* `setMetadata` set Metadata for producer, author, title or creator
 
 ### async node.js example
 
@@ -50,6 +51,7 @@ The Browser version has the following export functions:
 * `saveAsBuffer` exports a merged pdf as an [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array).
 * `saveAsBlob` exports a merged pdf as a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 * `save` starts a file-download directly in the browser.
+* `setMetadata` set Metadata for producer, author, title or creator
 
 #### Sample - React
 
@@ -93,6 +95,27 @@ const Merger = (files) => {
     ></iframe>
   );
 };
+```
+
+#### Sample - Set Metadata
+
+```js
+const merger = new PDFMerger();
+
+// Add files
+
+// Set only producer
+await merger.setMetadata({
+  producer: "Custom Producer",
+});
+
+// Set all 4 fields
+await merger.setMetadata({
+  producer: "Custom Producer",
+  author: "Custom Author",
+  creator: "Custom Creator",
+  title: "Custom Title"
+});
 ```
 
 ## Similar libraries
