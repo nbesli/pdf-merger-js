@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const pdfDiff = require('pdf-diff')
+const { PDFDocument } = require('pdf-lib')
 
 const PDFMerger = require('../index')
 
@@ -123,6 +124,25 @@ describe('PDFMerger', () => {
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'))
     const buffer = await merger.saveAsBuffer()
     expect(buffer instanceof Buffer).toEqual(true)
+  })
+
+  test('set title and check if title is set properly', async () => {
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
+
+    const testTitle = "Test Title"
+
+    merger.setMetadata({
+      title: testTitle
+    })
+
+    await merger.save(path.join(TMP_DIR, 'Testfile_A_Metadata.pdf'))
+    const pdfData = fs.readFileSync(path.join(TMP_DIR, 'Testfile_A_Metadata.pdf'));
+
+    const outputDocument = await PDFDocument.load(pdfData, {ignoreEncryption: true})
+    const outputTitle = outputDocument.getTitle()
+
+    expect(testTitle).toBe(outputTitle)
   })
 
   afterAll(async () => {
