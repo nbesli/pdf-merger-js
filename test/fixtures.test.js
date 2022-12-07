@@ -132,7 +132,7 @@ describe('PDFMerger', () => {
 
     const testTitle = "Test Title"
 
-    merger.setMetadata({
+    await merger.setMetadata({
       title: testTitle
     })
 
