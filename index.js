@@ -98,7 +98,7 @@ class PDFMerger {
     })
   }
 
-  async setMetadata(metadata) {
+  async setMetadata (metadata) {
     await this._ensureDoc()
     if (metadata.producer) this.doc.setProducer(metadata.producer)
     if (metadata.author) this.doc.setAuthor(metadata.author)

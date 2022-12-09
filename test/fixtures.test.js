@@ -130,16 +130,16 @@ describe('PDFMerger', () => {
     const merger = new PDFMerger()
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
 
-    const testTitle = "Test Title"
+    const testTitle = 'Test Title'
 
     await merger.setMetadata({
       title: testTitle
     })
 
     await merger.save(path.join(TMP_DIR, 'Testfile_A_Metadata.pdf'))
-    const pdfData = fs.readFileSync(path.join(TMP_DIR, 'Testfile_A_Metadata.pdf'));
+    const pdfData = fs.readFileSync(path.join(TMP_DIR, 'Testfile_A_Metadata.pdf'))
 
-    const outputDocument = await PDFDocument.load(pdfData, {ignoreEncryption: true})
+    const outputDocument = await PDFDocument.load(pdfData, { ignoreEncryption: true })
     const outputTitle = outputDocument.getTitle()
 
     expect(testTitle).toBe(outputTitle)
