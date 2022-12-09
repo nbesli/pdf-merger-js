@@ -1,7 +1,8 @@
-// Type definitions for pdf-merger-js v3.4.0
+// Type definitions for pdf-merger-js v4.2.0
 // Project: https://github.com/nbesli/pdf-merger-js
 // Definitions by: Alexander Wunschik <https://github.com/mojoaxel/>
 //                 Daniel Hammer <https://github.com/danmhammer/>
+//                 Lukas Loeffler <https://github.com/LukasLoeffler>
 
 declare module "pdf-merger-js/browser" {
   class PDFMerger {

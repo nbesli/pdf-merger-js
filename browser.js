@@ -84,7 +84,7 @@ class PDFMerger {
 
   async _addFromToPage (inputFile, from, to) {
     if (typeof from !== 'number' || typeof to !== 'number' || from < 0 || from < 0) {
-      throw new Error('Invalid function parameter. \'from\' and \'to\' must be possitive \'numbers\'.')
+      throw new Error('Invalid function parameter. \'from\' and \'to\' must be positive \'numbers\'.')
     }
     if (to < from) {
       throw new Error('Invalid function parameter. \'to\' must be greater or eaqual to \'from\'.')
@@ -95,7 +95,7 @@ class PDFMerger {
     const pageCount = srcDoc.getPageCount()
 
     if (from >= pageCount || to >= pageCount) {
-      throw new Error(`Invalid function parameter. The document has not enought pages. (from:${from}, to:${to}, pages:${pageCount})`)
+      throw new Error(`Invalid function parameter. The document has not enough pages. (from:${from}, to:${to}, pages:${pageCount})`)
     }
 
     // create a array [2,3,4] with from=2 and to=4
