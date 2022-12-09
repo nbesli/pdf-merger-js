@@ -8,7 +8,15 @@ declare module "pdf-merger-js" {
     add(inputFile: string | Buffer | ArrayBuffer, pages?: string | string[] | undefined | null): Promise<undefined>;
     save(fileName: string): Promise<undefined>;
     saveAsBuffer(): Promise<Buffer>;
+    setMetadata(metadata: Metadata): Promise<void>;
   }
-
   export = PDFMerger;
+}
+
+
+declare interface Metadata {
+  producer?: string
+  author?: string
+  title?: string
+  creator?: string
 }
