@@ -110,6 +110,7 @@ class PDFMerger {
     await this._ensureDoc()
     const pdfBytes = await this.doc.save()
     await fs.writeFile(fileName, pdfBytes)
+    this.doc = undefined
   }
 
   async saveAsBuffer () {
