@@ -1,6 +1,6 @@
 # Description
 
-This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environnement **without any external dependencies**.
+This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environment **without any external dependencies**.
 
 > If you are searching for the legacy version based on 
 [pdfjs](https://www.npmjs.com/package/pdfjs) please install a [v3 release](https://github.com/nbesli/pdf-merger-js/releases?q=v3&expanded=true). Since [v4](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true) we use [pdf-lib](https://pdf-lib.js.org/) instead.
@@ -19,7 +19,8 @@ The node.js version has the following export functions:
 
 * `saveAsBuffer` exports a merged pdf as an [Buffer](https://nodejs.org/api/buffer.html).
 * `save` saves the pdf under the given filename.
-* `setMetadata` set Metadata for producer, author, title or creator
+* `setMetadata` set Metadata for producer, author, title or creator.
+* `reset` resets the internal state of the document, to start again.
 
 ### async node.js example
 
@@ -51,7 +52,8 @@ The Browser version has the following export functions:
 * `saveAsBuffer` exports a merged pdf as an [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array).
 * `saveAsBlob` exports a merged pdf as a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
 * `save` starts a file-download directly in the browser.
-* `setMetadata` set Metadata for producer, author, title or creator
+* `setMetadata` set Metadata for producer, author, title or creator.
+* `reset` resets the internal state of the document, to start again.
 
 #### Sample - React
 

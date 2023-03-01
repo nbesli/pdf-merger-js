@@ -2,6 +2,10 @@ const { PDFDocument } = require('pdf-lib')
 
 class PDFMerger {
   constructor () {
+    this.reset()
+  }
+
+  reset () {
     this.doc = undefined
   }
 

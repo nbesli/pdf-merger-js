@@ -3,12 +3,16 @@ const fs = require('fs').promises
 
 class PDFMerger {
   constructor () {
-    this.doc = undefined
+    this.reset()
 
     this.loadOptions = {
       // allow merging of encrypted pdfs (issue #88)
       ignoreEncryption: true
     }
+  }
+
+  reset () {
+    this.doc = undefined
   }
 
   async add (inputFile, pages) {
