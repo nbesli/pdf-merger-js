@@ -29,7 +29,23 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('combine pages from multibe books (array)', async () => {
+  test('reset the internal document', async () => {
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'MergeDemo.pdf'))
+    merger.reset()
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_B.pdf'))
+    await merger.save(path.join(TMP_DIR, 'Testfile_AB.pdf'))
+
+    const diff = await pdfDiff(
+      path.join(FIXTURES_DIR, 'Testfile_AB.pdf'),
+      path.join(TMP_DIR, 'Testfile_AB.pdf')
+    )
+
+    expect(diff).toBeFalsy()
+  })
+
+  test('combine pages from multipel books (array)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo1.pdf'
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
@@ -44,7 +60,7 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('combine pages from multibe books (string - array)', async () => {
+  test('combine pages from multipel books (string - array)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo1.pdf'
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '1')
@@ -59,7 +75,7 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('combine pages from multibe books (plain number - array)', async () => {
+  test('combine pages from multipel books (plain number - array)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo1.pdf'
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), 1)
@@ -74,22 +90,7 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('combine pages from multibe books (start-end)', async () => {
-    const merger = new PDFMerger()
-    const tmpFile = 'MergeDemo2.pdf'
-    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
-    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
-    await merger.save(path.join(TMP_DIR, tmpFile))
-
-    const diff = await pdfDiff(
-      path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
-      path.join(TMP_DIR, tmpFile)
-    )
-
-    expect(diff).toBeFalsy()
-  })
-
-  test('combine pages from multibe books (start - end)', async () => {
+  test('combine pages from multipel books (start - end)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo2.pdf'
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
@@ -104,11 +105,26 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('combine pages from multibe books (start to end)', async () => {
+  test('combine pages from multipel books (start to end)', async () => {
     const merger = new PDFMerger()
     const tmpFile = 'MergeDemo2.pdf'
     await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
     await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1 to 3')
+    await merger.save(path.join(TMP_DIR, tmpFile))
+
+    const diff = await pdfDiff(
+      path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+      path.join(TMP_DIR, tmpFile)
+    )
+
+    expect(diff).toBeFalsy()
+  })
+
+  test('combine pages from multipel books (start-end)', async () => {
+    const merger = new PDFMerger()
+    const tmpFile = 'MergeDemo2.pdf'
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
+    await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
     await merger.save(path.join(TMP_DIR, tmpFile))
 
     const diff = await pdfDiff(

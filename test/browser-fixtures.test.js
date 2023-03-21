@@ -194,6 +194,27 @@ describe('PDFMerger', () => {
 
       expect(diff).toBeFalsy()
     })
+
+    test('merge two simple files', async () => {
+      const merger = new PDFMerger()
+
+      await merger.add(fileB)
+      merger.reset()
+
+      await merger.add(fileA)
+      await merger.add(fileB)
+
+      const buffer = await merger.saveAsBuffer()
+      // Write the buffer as a file for pdfDiff
+      await fs.writeFile(path.join(TMP_DIR, 'Testfile_AB.pdf'), buffer)
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_AB.pdf'),
+        path.join(TMP_DIR, 'Testfile_AB.pdf')
+      )
+
+      expect(diff).toBeFalsy()
+    })
   })
 
   describe('test valid inputs', () => {
