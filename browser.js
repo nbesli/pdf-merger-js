@@ -1,5 +1,14 @@
 const { PDFDocument } = require('pdf-lib')
 
+const globalObject =
+  typeof globalThis === 'object'
+    ? globalThis
+    : typeof window === 'object'
+      ? window // Browser
+      : typeof self === 'object'
+        ? self // Worker
+        : this
+
 class PDFMerger {
   constructor () {
     this.reset()
@@ -54,20 +63,20 @@ class PDFMerger {
       } catch (e) {
         throw new Error(`This is not a valid url: ${input}`)
       }
-      const res = await window.fetch(input)
+      const res = await globalObject.fetch(input)
       const aBuffer = await res.arrayBuffer()
       return new Uint8Array(aBuffer)
     }
 
-    if (input instanceof window.File) {
-      const fileReader = new window.FileReader()
+    if (input instanceof globalObject.File) {
+      const fileReader = new globalObject.FileReader()
       fileReader.onload = function (evt) {
         return fileReader.result
       }
       fileReader.readAsArrayBuffer(input)
     }
 
-    if (input instanceof window.Blob) {
+    if (input instanceof globalObject.Blob) {
       const aBuffer = await input.arrayBuffer()
       return new Uint8Array(aBuffer)
     }
@@ -139,7 +148,7 @@ class PDFMerger {
   async saveAsBlob () {
     const buffer = await this.saveAsBuffer()
 
-    return new window.Blob([buffer], {
+    return new globalObject.Blob([buffer], {
       type: 'application/pdf'
     })
   }
