@@ -27,7 +27,7 @@ The node.js version has the following export functions:
 ```js
 const PDFMerger = require('pdf-merger-js');
 
-var merger = new PDFMerger();
+let merger = new PDFMerger();
 
 (async () => {
   await merger.add('pdf1.pdf');  //merge all pages. parameter is the path to file and filename.
