@@ -37,6 +37,12 @@ describe('issues', () => {
     await merger.save(path.join(TMP_DIR, 'issue-88_merged.pdf'))
   })
 
+  test('merge a encrypted pdf (#120)', async () => {
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'issue-120.pdf'))
+    await merger.save(path.join(TMP_DIR, 'issue-120_merged.pdf'))
+  })
+
   test('merge the last pages of a pdf (#101)', async () => {
     const merger = new PDFMerger()
     await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '7 to 8')

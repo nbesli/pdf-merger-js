@@ -299,6 +299,16 @@ describe('PDFMerger', () => {
     })
   })
 
+  describe('test for specific issues', () => {
+    test('issue #120', async () => {
+      const merger = new PDFMerger()
+      const fileIssue120 = await readFixtureAsUint8Array('issue-120.pdf')
+      await merger.add(fileIssue120)
+      const buffer = await merger.saveAsBuffer()
+      expect(buffer).toBeInstanceOf(Uint8Array)
+    })
+  })
+
   afterAll(async () => {
     await fs.remove(TMP_DIR)
     // await new Promise(resolve => setTimeout(resolve, 10000))
