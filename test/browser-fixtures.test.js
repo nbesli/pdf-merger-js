@@ -299,8 +299,18 @@ describe('PDFMerger', () => {
     })
   })
 
+  describe('test for specific issues', () => {
+    test('merge a encrypted pdf (#88)', async () => {
+      const merger = new PDFMerger()
+
+      const fileIssue88 = await readFixtureAsUint8Array('issue-88.pdf')
+      await merger.add(fileIssue88)
+
+      await merger.saveAsBuffer()
+    })
+  })
+
   afterAll(async () => {
     await fs.remove(TMP_DIR)
-    // await new Promise(resolve => setTimeout(resolve, 10000))
   })
 })
