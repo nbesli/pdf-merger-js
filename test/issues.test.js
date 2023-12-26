@@ -1,8 +1,10 @@
-const path = require('path')
-const fs = require('fs-extra')
+import path from 'path'
+import fs from 'fs-extra'
+import { jest } from '@jest/globals'
 
-const PDFMerger = require('../index')
+import PDFMerger from '../index'
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 const FIXTURES_DIR = path.join(__dirname, 'fixtures')
 const TMP_DIR = path.join(__dirname, 'tmp')
 

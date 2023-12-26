@@ -1,4 +1,4 @@
-const { PDFDocument } = require('pdf-lib')
+import { PDFDocument } from 'pdf-lib'
 
 const globalObject =
   typeof globalThis === 'object'
@@ -9,7 +9,7 @@ const globalObject =
         ? self // Worker
         : this
 
-class PDFMerger {
+export default class PDFMerger {
   constructor () {
     this.reset()
 
@@ -167,5 +167,3 @@ class PDFMerger {
     link.click()
   }
 }
-
-module.exports = PDFMerger

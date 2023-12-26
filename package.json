@@ -2,14 +2,18 @@
   "name": "pdf-merger-js",
   "version": "4.3.1",
   "description": "merge multiple PDF documents, or parts of them, to a new PDF document",
+  "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
   "main": "./index.js",
   "types": "./index.d.ts",
   "browser": "./browser.js",
   "scripts": {
     "standard": "standard",
     "standard:fix": "standard --fix",
-    "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watch --forceExit --detectOpenHandles"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest --detectOpenHandles",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --forceExit --detectOpenHandles"
   },
   "standard": {
     "env": [
