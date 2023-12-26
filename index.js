@@ -1,124 +1,70 @@
-import { PDFDocument } from 'pdf-lib'
 import fs from 'fs/promises'
 
-export default class PDFMerger {
-  constructor () {
-    this.reset()
+import PDFMergerBase from './PDFMergerBase.js'
 
-    this.loadOptions = {
-      // allow merging of encrypted pdfs (issue #88)
-      ignoreEncryption: true
-    }
-  }
+/**
+ * @typedef {import('fs/promises').PathLike} PathLike
+ */
+/**
+ * @typedef {import(./PDFMergerBase).PdfInput | Buffer | String | PathLike | string} PdfInput
+ */
 
-  reset () {
-    this.doc = undefined
-  }
-
-  async add (inputFile, pages) {
-    await this._ensureDoc()
-    if (typeof pages === 'undefined' || pages === null) {
-      await this._addEntireDocument(inputFile)
-    } else if (Array.isArray(pages)) {
-      await this._addGivenPages(inputFile, pages)
-    } else if (typeof pages === 'number') {
-      await this._addGivenPages(inputFile, new Array(pages.toString()))
-    } else if (pages.indexOf(',') > 0) {
-      await this._addGivenPages(inputFile, pages.replace(/ /g, '').split(','))
-    } else if (pages.toLowerCase().indexOf('to') >= 0) {
-      const span = pages.replace(/ /g, '').split('to')
-      await this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
-    } else if (pages.indexOf('-') >= 0) {
-      const span = pages.replace(/ /g, '').split('-')
-      await this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
-    } else if (pages.toString().trim().match(/^[0-9]+$/)) {
-      await this._addGivenPages(inputFile, new Array(pages))
-    } else {
-      throw new Error('invalid parameter "pages"')
-    }
-  }
-
-  async _ensureDoc () {
-    if (!this.doc) {
-      this.doc = await PDFDocument.create()
-      this.doc.setProducer('pdf-merger-js')
-      this.doc.setCreationDate(new Date())
-    }
-  }
-
-  async _getInputAsBuffer (input) {
-    if (input instanceof Buffer || input instanceof ArrayBuffer) {
+export default class PDFMerger extends PDFMergerBase {
+  /**
+   * Returns a Uint8Array of the input.
+   *
+   * If input is a string, it is treated as an Filepath
+   * If the file does not exist, it is treated as an URL.
+   *
+   * @async
+   * @protected
+   * @override
+   * @param {PdfInput} input
+   * @returns {Uint8Array}
+   */
+  async _getInputAsUint8Array (input) {
+    if (input instanceof Buffer) {
       return input
     }
-    return await fs.readFile(input)
-  }
 
-  async _addEntireDocument (input) {
-    const src = await this._getInputAsBuffer(input)
-    const srcDoc = await PDFDocument.load(src, this.loadOptions)
-
-    const copiedPages = await this.doc.copyPages(srcDoc, srcDoc.getPageIndices())
-    copiedPages.forEach((page) => {
-      this.doc.addPage(page)
-    })
-  }
-
-  async _addFromToPage (input, from, to) {
-    if (typeof from !== 'number' || typeof to !== 'number' || from < 1 || from < 1) {
-      throw new Error('Invalid function parameter. \'from\' and \'to\' must be positive \'numbers\'.')
-    }
-    if (to < from) {
-      throw new Error('Invalid function parameter. \'to\' must be greater or equal to \'from\'.')
+    // strings can be a path to a (local) files or a external URL
+    if (typeof input === 'string' || input instanceof String) {
+      try {
+        await fs.access(input)
+        return await fs.readFile(input)
+      } catch (e) {
+        try {
+          Boolean(new URL(input))
+          input = new URL(input)
+        } catch (e) {
+          throw new Error(`The provided string "${input}" is neither a valid file-path nor a valid URL!`)
+        }
+      }
     }
 
-    const src = await this._getInputAsBuffer(input)
-    const srcDoc = await PDFDocument.load(src, this.loadOptions)
-    const pageCount = srcDoc.getPageCount()
-
-    if (from > pageCount || to > pageCount) {
-      throw new Error(`Invalid function parameter. The document has not enough pages. (from:${from}, to:${to}, pages:${pageCount})`)
-    }
-
-    const pages = Array.from({ length: (to - from) + 1 }, (_, i) => i + from - 1)
-    const copiedPages = await this.doc.copyPages(srcDoc, pages)
-    copiedPages.forEach((page) => {
-      this.doc.addPage(page)
-    })
+    return await super._getInputAsUint8Array(input)
   }
 
-  async _addGivenPages (input, pages) {
-    if (pages.length <= 0) {
-      return
-    }
-
-    const src = await this._getInputAsBuffer(input)
-    const srcDoc = await PDFDocument.load(src, this.loadOptions)
-
-    // switch from indexed 1 to indexed 0
-    const pagesIndexed1 = pages.map(p => p - 1)
-    const copiedPages = await this.doc.copyPages(srcDoc, pagesIndexed1)
-    copiedPages.forEach((page) => {
-      this.doc.addPage(page)
-    })
-  }
-
-  async setMetadata (metadata) {
-    await this._ensureDoc()
-    if (metadata.producer) this.doc.setProducer(metadata.producer)
-    if (metadata.author) this.doc.setAuthor(metadata.author)
-    if (metadata.title) this.doc.setTitle(metadata.title)
-    if (metadata.creator) this.doc.setCreator(metadata.creator)
-  }
-
-  async save (fileName) {
-    await this._ensureDoc()
-    const pdfBytes = await this.doc.save()
-    await fs.writeFile(fileName, pdfBytes)
-  }
-
+  /**
+   * Return the merged PDF as a Buffer.
+   *
+   * @async
+   * @returns {Promise<Buffer>}
+   */
   async saveAsBuffer () {
-    await this._ensureDoc()
-    const uInt8Array = await this.doc.save()
+    const uInt8Array = await this._saveAsUint8Array()
     return Buffer.from(uInt8Array)
+  }
+
+  /**
+   * Save the merged PDF to the given path.
+   *
+   * @async
+   * @param {string | PathLike} fileName
+   * @returns {Promise<void>}
+   */
+  async save (fileName) {
+    const pdfBytes = await this._saveAsUint8Array()
+    await fs.writeFile(fileName, pdfBytes)
   }
 }

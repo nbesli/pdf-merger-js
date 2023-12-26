@@ -1,4 +1,4 @@
-import { PDFDocument } from 'pdf-lib'
+import PDFMergerBase from './PDFMergerBase.js'
 
 const globalObject =
   typeof globalThis === 'object'
@@ -9,157 +9,83 @@ const globalObject =
         ? self // Worker
         : this
 
-export default class PDFMerger {
-  constructor () {
-    this.reset()
+/**
+ * @typedef {import(./PDFMergerBase).PdfInput | File | String | string} PdfInput
+ */
 
-    this.loadOptions = {
-      // allow merging of encrypted pdfs (issue #88)
-      ignoreEncryption: true
-    }
-  }
-
-  reset () {
-    this.doc = undefined
-  }
-
-  async add (inputFile, pages) {
-    await this._ensureDoc()
-    if (typeof pages === 'undefined' || pages === null) {
-      await this._addEntireDocument(inputFile)
-    } else if (Array.isArray(pages)) {
-      await this._addGivenPages(inputFile, pages)
-    } else if (pages.indexOf(',') > 0) {
-      const aPages = pages.replace(/ /g, '').split(',')
-      await this._addGivenPages(inputFile, aPages)
-    } else if (pages.toLowerCase().indexOf('to') >= 0) {
-      const span = pages.replace(/ /g, '').split('to')
-      const from = parseInt(span[0])
-      const to = parseInt(span[1])
-      await this._addFromToPage(inputFile, from, to)
-    } else if (pages.indexOf('-') >= 0) {
-      const span = pages.replace(/ /g, '').split('-')
-      const from = parseInt(span[0])
-      const to = parseInt(span[1])
-      await this._addFromToPage(inputFile, from, to)
-    } else {
-      throw new Error('invalid parameter "pages"')
-    }
-  }
-
-  async _ensureDoc () {
-    if (!this.doc) {
-      this.doc = await PDFDocument.create()
-    }
-  }
-
+export default class PDFMerger extends PDFMergerBase {
+  /**
+   * Returns a Uint8Array of the input.
+   *
+   * If input is a string, it is treated as an URL.
+   *
+   * @async
+   * @protected
+   * @overwrite
+   * @param {PdfInput} input
+   * @returns {Uint8Array}
+   */
   async _getInputAsUint8Array (input) {
-    if (input instanceof Uint8Array) {
-      return input
+    // see https://developer.mozilla.org/en-US/docs/Web/API/File
+    if (input instanceof globalObject.File) {
+      return new Promise((resolve, reject) => {
+        const fileReader = new globalObject.FileReader()
+        fileReader.onload = function (evt) {
+          const result = fileReader.result
+          const arrayBuffer = new Uint8Array(result)
+          return resolve(arrayBuffer)
+        }
+        fileReader.readAsArrayBuffer(input)
+      })
     }
 
-    if (input instanceof ArrayBuffer || Object.prototype.toString.call(input) === '[object ArrayBuffer]') {
-      return new Uint8Array(input)
-    }
-
+    // strings are treated as URLs int the browser context
     if (typeof input === 'string' || input instanceof String) {
       try {
         Boolean(new URL(input))
       } catch (e) {
         throw new Error(`This is not a valid url: ${input}`)
       }
-      const res = await globalObject.fetch(input)
-      const aBuffer = await res.arrayBuffer()
-      return new Uint8Array(aBuffer)
+      input = new URL(input)
     }
 
-    if (input instanceof globalObject.File) {
-      const fileReader = new globalObject.FileReader()
-      fileReader.onload = function (evt) {
-        return fileReader.result
-      }
-      fileReader.readAsArrayBuffer(input)
-    }
-
-    if (input instanceof globalObject.Blob) {
-      const aBuffer = await input.arrayBuffer()
-      return new Uint8Array(aBuffer)
-    }
-
-    console.log({ input, inputc: Object.prototype.toString.call(input), ArrayBuffer, eq: input.contructor !== ArrayBuffer })
-    throw new Error('pdf must be represented as an ArrayBuffer, Blob, File, URL or fetchable string')
+    return await super._getInputAsUint8Array(input)
   }
 
-  async _addEntireDocument (input) {
-    const src = await this._getInputAsUint8Array(input)
-    const srcDoc = await PDFDocument.load(src, this.loadOptions)
-
-    const copiedPages = await this.doc.copyPages(srcDoc, srcDoc.getPageIndices())
-    copiedPages.forEach((page) => {
-      this.doc.addPage(page)
-    })
-  }
-
-  async _addFromToPage (inputFile, from, to) {
-    if (typeof from !== 'number' || typeof to !== 'number' || from < 0 || from < 0) {
-      throw new Error('Invalid function parameter. \'from\' and \'to\' must be positive \'numbers\'.')
-    }
-    if (to < from) {
-      throw new Error('Invalid function parameter. \'to\' must be greater or eaqual to \'from\'.')
-    }
-
-    const src = await this._getInputAsUint8Array(inputFile)
-    const srcDoc = await PDFDocument.load(src, this.loadOptions)
-    const pageCount = srcDoc.getPageCount()
-
-    if (from >= pageCount || to >= pageCount) {
-      throw new Error(`Invalid function parameter. The document has not enough pages. (from:${from}, to:${to}, pages:${pageCount})`)
-    }
-
-    // create a array [2,3,4] with from=2 and to=4
-    const pages = Array.from({ length: (to - from) + 1 }, (_, i) => i + from - 1)
-    const copiedPages = await this.doc.copyPages(srcDoc, pages)
-    copiedPages.forEach((page) => {
-      this.doc.addPage(page)
-    })
-  }
-
-  async _addGivenPages (inputFile, pages) {
-    if (pages.length <= 0) return
-
-    const src = await this._getInputAsUint8Array(inputFile)
-    const srcDoc = await PDFDocument.load(src, this.loadOptions)
-
-    const pagesIndexed1 = pages.map(p => p - 1)
-    const copiedPages = await this.doc.copyPages(srcDoc, pagesIndexed1)
-    copiedPages.forEach((page) => {
-      this.doc.addPage(page)
-    })
-  }
-
-  async setMetadata (metadata) {
-    await this._ensureDoc()
-    if (metadata.producer) this.doc.setProducer(metadata.producer)
-    if (metadata.author) this.doc.setAuthor(metadata.author)
-    if (metadata.title) this.doc.setTitle(metadata.title)
-    if (metadata.creator) this.doc.setCreator(metadata.creator)
-  }
-
+  /**
+   * Return the merged PDF as a Uint8Array.
+   *
+   * @async
+   * @returns {Promise<Uint8Array>}
+   */
   async saveAsBuffer () {
-    await this._ensureDoc()
-    return await this.doc.save()
+    return await this._saveAsUint8Array()
   }
 
+  /**
+   * Return the merged PDF as a Blob.
+   *
+   * @async
+   * @returns {Promise<Blob>}
+   */
   async saveAsBlob () {
-    const buffer = await this.saveAsBuffer()
+    const buffer = await this._saveAsUint8Array()
 
     return new globalObject.Blob([buffer], {
       type: 'application/pdf'
     })
   }
 
+  /**
+   * Download the PDF as a file with the given name.
+   * The extension ".pdf" is appended automatically.
+   *
+   * @async
+   * @param {string} fileName
+   * @returns {Promise<void>}
+   */
   async save (fileName) {
-    const dataUri = await this.doc.saveAsBase64({ dataUri: true })
+    const dataUri = await this._saveAsBase64()
 
     const link = document.createElement('a')
     link.href = dataUri
