@@ -1,7 +1,7 @@
-const { PDFDocument } = require('pdf-lib')
-const fs = require('fs').promises
+import { PDFDocument } from 'pdf-lib'
+import fs from 'fs/promises'
 
-class PDFMerger {
+export default class PDFMerger {
   constructor () {
     this.reset()
 
@@ -122,5 +122,3 @@ class PDFMerger {
     return Buffer.from(uInt8Array)
   }
 }
-
-module.exports = PDFMerger

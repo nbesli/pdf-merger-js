@@ -2,10 +2,14 @@
  * @jest-environment jsdom
  */
 
-const path = require('path')
-const fs = require('fs-extra')
-const pdfDiff = require('pdf-diff')
-const fetch = require('node-fetch')
+import path from 'path'
+import fs from 'fs-extra'
+import pdfDiff from 'pdf-diff'
+import fetch from 'node-fetch'
+import { jest } from '@jest/globals'
+
+import PDFMerger from '../browser'
+
 /*
   add a global `windows.fetch` to mock fetch
 */
@@ -13,8 +17,7 @@ global.window.fetch = jest.fn().mockImplementation((requestUrl) => {
   return Promise.resolve(fetch(requestUrl))
 })
 
-const PDFMerger = require('../browser')
-
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 const FIXTURES_DIR = path.join(__dirname, 'fixtures')
 const TMP_DIR = path.join(__dirname, 'tmp')
 

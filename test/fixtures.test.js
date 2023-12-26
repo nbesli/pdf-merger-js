@@ -1,10 +1,12 @@
-const path = require('path')
-const fs = require('fs-extra')
-const pdfDiff = require('pdf-diff')
-const { PDFDocument } = require('pdf-lib')
+import path from 'path'
+import fs from 'fs-extra'
+import pdfDiff from 'pdf-diff'
+import { PDFDocument } from 'pdf-lib'
+import { jest } from '@jest/globals'
 
-const PDFMerger = require('../index')
+import PDFMerger from '../index'
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname)
 const FIXTURES_DIR = path.join(__dirname, 'fixtures')
 const TMP_DIR = path.join(__dirname, 'tmp')
 
