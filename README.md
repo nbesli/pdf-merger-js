@@ -1,9 +1,12 @@
 # Description
 
-This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environment **without any external dependencies**.
+This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environment **without any non-javascript dependencies**.
 
-> If you are searching for the legacy version based on 
+## Legacy notes
+
+* If you are searching for the legacy version based on 
 [pdfjs](https://www.npmjs.com/package/pdfjs) please install a [v3 release](https://github.com/nbesli/pdf-merger-js/releases?q=v3&expanded=true). Since [v4](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true) we use [pdf-lib](https://pdf-lib.js.org/) instead.
+* If you are searching for a legacy version using CommonJS modules please install a [v4 release](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true). Since [v5](https://github.com/nbesli/pdf-merger-js/releases?q=v5&expanded=true) we use the modern ESM ("import") instead of the CommonJS ("require) module standard.
 
 This library is inspired by the [PHP library PDFMerger](https://github.com/myokyawhtun/PDFMerger) and has a very similar API.
 
@@ -22,10 +25,10 @@ The node.js version has the following export functions:
 * `setMetadata` set Metadata for producer, author, title or creator.
 * `reset` resets the internal state of the document, to start again.
 
-### async node.js example
+#### async node.js example
 
 ```js
-const PDFMerger = require('pdf-merger-js');
+import PDFMerger from 'pdf-merger-js';
 
 var merger = new PDFMerger();
 
@@ -36,6 +39,14 @@ var merger = new PDFMerger();
   await merger.add('pdf2.pdf', '4, 7, 8'); // merge the pages 4, 7 and 8
   await merger.add('pdf3.pdf', '3 to 5'); //merge pages 3 to 5 (3,4,5)
   await merger.add('pdf3.pdf', '3-5'); //merge pages 3 to 5 (3,4,5)
+
+  // Set metadata
+  await merger.setMetadata({
+    producer: "pdf-merger-js based script",
+    author: "John Doe",
+    creator: "John Doe",
+    title: "My live as John Doe"
+  });
 
   await merger.save('merged.pdf'); //save under given name and reset the internal document
   
@@ -55,7 +66,7 @@ The Browser version has the following export functions:
 * `setMetadata` set Metadata for producer, author, title or creator.
 * `reset` resets the internal state of the document, to start again.
 
-#### Sample - React
+#### async react example
 
 ```jsx
 import PDFMerger from 'pdf-merger-js/browser';
@@ -70,8 +81,12 @@ const Merger = (files) => {
       const merger = new PDFMerger();
 
       for(const file of files) {
-        await merger.add(file)
+        await merger.add(file);
       }
+
+      await merger.setMetadata({
+        producer: "pdf-merger-js based script"
+      });
 
       const mergedPdf = await merger.saveAsBlob();
       const url = URL.createObjectURL(mergedPdf);
@@ -97,27 +112,6 @@ const Merger = (files) => {
     ></iframe>
   );
 };
-```
-
-#### Sample - Set Metadata
-
-```js
-const merger = new PDFMerger();
-
-// Add files
-
-// Set only producer
-await merger.setMetadata({
-  producer: "Custom Producer",
-});
-
-// Set all 4 fields
-await merger.setMetadata({
-  producer: "Custom Producer",
-  author: "Custom Author",
-  creator: "Custom Creator",
-  title: "Custom Title"
-});
 ```
 
 ## Similar libraries
