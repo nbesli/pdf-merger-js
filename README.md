@@ -14,7 +14,32 @@ This library is inspired by the [PHP library PDFMerger](https://github.com/myoky
 
 `npm install --save pdf-merger-js`
 
+of global installation if you want to use the cli tool:
+
+`npm install -g pdf-merger-js`
+
 ## Usage
+
+### CLI
+
+```
+Options:
+  -V, --version              output the version number
+  -o, --output <outputFile>  Merged PDF output file path
+  -v, --verbose              Print verbose output
+  -s, --silent               do not print any output to stdout. Overwrites --verbose
+  -h, --help                 display help for command
+```
+
+#### Example calls
+
+Merge pages 1-2 from the first input with pages 1,2 and 5-7 from the second pdf document:
+
+`pdf-merge --output ./merged.pdf ./input1.pdf#1-2 ./input2.pdf#1,2,5-7`
+
+Get two pdf files from the an url and merge the first one with pages 2-3 from the second one:
+
+`pdf-merge --verbose --output ./sample.pdf Testfile.pdf https://pdfobject.com/pdf/sample.pdf https://upload.wikimedia.org/wikipedia/commons/1/13/Example.pdf#2-3`
 
 ### node.js
 
