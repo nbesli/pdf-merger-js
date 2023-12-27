@@ -1,5 +1,7 @@
 import { PDFDocument } from 'pdf-lib'
 
+import { parsePagesString } from './parsePagesString'
+
 /**
  * @typedef {Object} Metadata
  * @property {string} [producer]
@@ -68,42 +70,26 @@ export default class PDFMergerBase {
    * Add pages from a PDF document to the end of the merged document.
    *
    * @async
-   * @param {string | Buffer | ArrayBuffer} inputFile a pdf source
+   * @param {PdfInput} input - a pdf source
    * @param {string | string[] | number | number[] | undefined | null} [pages]
    * @returns {Promise<void>}
    */
-  async add (inputFile, pages) {
+  async add (input, pages) {
     await this._ensureDoc()
-    if (typeof pages === 'undefined' || pages === null) {
+    if (typeof pages === 'undefined' || pages === null || pages === 'all') {
       // of no pages are given, add the entire document
-      await this._addEntireDocument(inputFile)
+      await this._addPagesFromDocument(input)
     } else if (typeof pages === 'number') {
       // e.g. 2
-      await this._addGivenPages(inputFile, [pages])
+      await this._addPagesFromDocument(input, [pages])
     } else if (Array.isArray(pages)) {
       // e.g. [2,3,6] or ["2","3","6"]
-      const pagesAsNumbers = pages.map(p => parseInt(p))
-      await this._addGivenPages(inputFile, pagesAsNumbers)
+      const pagesAsNumbers = pages.map(p => typeof p === 'string' ? parseInt(p.trim()) : p)
+      await this._addPagesFromDocument(input, pagesAsNumbers)
     } else if (typeof pages === 'string' || pages instanceof String) {
-      if (pages === 'all') {
-        // of no pages are given, add the entire document
-        await this._addEntireDocument(inputFile)
-      } else if (pages.indexOf(',') > 0) {
-        // e.g. "2,3,6"
-        const list = pages.trim().replace(/ /g, '').split(',')
-        await this._addGivenPages(inputFile, list)
-      } else if (pages.toLowerCase().indexOf('to') >= 0) {
-        // e.g. "2 to 6" or "2to6"
-        const span = pages.trim().replace(/ /g, '').split('to')
-        await this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
-      } else if (pages.indexOf('-') >= 0) {
-        // e.g. "2 - 6" or "2-6"
-        const span = pages.trim().replace(/ /g, '').split('-')
-        await this._addFromToPage(inputFile, parseInt(span[0]), parseInt(span[1]))
-      } else if (pages.trim().match(/^[0-9]+$/)) {
-        // e.g. "2"
-        await this._addGivenPages(inputFile, [pages])
-      }
+      // e.g. "2,3,6" or "2-6" or "2to6,8,10-12"
+      const pagesArray = parsePagesString(pages)
+      await this._addPagesFromDocument(input, pagesArray)
     } else {
       throw new Error([
         'Invalid parameter "pages".',
@@ -197,75 +183,26 @@ export default class PDFMergerBase {
   }
 
   /**
-   * Add the entire document to the merged document.
-   *
    * @async
    * @protected
    * @param {PdfInput} input
+   * @param {number[] | undefined} pages - array of page numbers to add (starts at 1)
    * @returns {Promise<void>}
    */
-  async _addEntireDocument (input) {
+  async _addPagesFromDocument (input, pages = undefined) {
     const src = await this._getInputAsUint8Array(input)
     const srcDoc = await PDFDocument.load(src, this._loadOptions)
 
-    const copiedPages = await this._doc.copyPages(srcDoc, srcDoc.getPageIndices())
-    copiedPages.forEach((page) => {
-      this._doc.addPage(page)
-    })
-  }
-
-  /**
-   * Add a range of pages from the document to the merged document.
-   *
-   * @async
-   * @protected
-   * @param {PdfInput} input
-   * @param {number} from - first page to add (starts at 1)
-   * @param {number} to - last page to add (starts at 1)
-   * @returns {Promise<void>}
-   */
-  async _addFromToPage (input, from, to) {
-    if (typeof from !== 'number' || typeof to !== 'number' || from <= 0 || from <= 0) {
-      throw new Error('Invalid function parameter. \'from\' and \'to\' must be positive \'numbers\'.')
-    }
-    if (to < from) {
-      throw new Error('Invalid function parameter. \'to\' must be greater or equal to \'from\'.')
+    let indices = []
+    if (pages === undefined) {
+      // add the whole document
+      indices = srcDoc.getPageIndices()
+    } else {
+      // add selected pages switching to a 0-based index
+      indices = pages.map(p => p - 1)
     }
 
-    const src = await this._getInputAsUint8Array(input)
-    const srcDoc = await PDFDocument.load(src, this._loadOptions)
-    const pageCount = srcDoc.getPageCount()
-
-    if (from > pageCount || to > pageCount) {
-      throw new Error(`Invalid function parameter. The document has not enough pages. (from:${from}, to:${to}, pages:${pageCount})`)
-    }
-
-    // create a array [2,3,4] with from=2 and to=4
-    const pages = Array.from({ length: (to - from) + 1 }, (_, i) => i + from - 1)
-    const copiedPages = await this._doc.copyPages(srcDoc, pages)
-    copiedPages.forEach((page) => {
-      this._doc.addPage(page)
-    })
-  }
-
-  /**
-   * @async
-   * @protected
-   * @param {PdfInput} input
-   * @param {number[]} pages - array of page numbers to add (starts at 1)
-   * @returns {Promise<void>}
-   */
-  async _addGivenPages (input, pages) {
-    if (pages.length <= 0) {
-      return
-    }
-
-    const src = await this._getInputAsUint8Array(input)
-    const srcDoc = await PDFDocument.load(src, this._loadOptions)
-
-    // switch from indexed 1 to indexed 0
-    const pagesIndexed1 = pages.map(p => p - 1)
-    const copiedPages = await this._doc.copyPages(srcDoc, pagesIndexed1)
+    const copiedPages = await this._doc.copyPages(srcDoc, indices)
     copiedPages.forEach((page) => {
       this._doc.addPage(page)
     })
