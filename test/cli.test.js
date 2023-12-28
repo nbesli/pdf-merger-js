@@ -35,7 +35,8 @@ describe('issues', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('should merge two pdfs from URL', async () => {
+  const testIfFetch = typeof fetch !== 'undefined' ? test : test.skip
+  testIfFetch('should merge two pdfs from URL', async () => {
     await mergePDFsCli(path.join(TMP_DIR, 'Testfile_AB.pdf'), [
       'https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_A.pdf',
       'https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_B.pdf'
