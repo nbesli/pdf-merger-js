@@ -124,10 +124,10 @@ describe('PDFMerger', () => {
     const testIfFetch = typeof fetch !== 'undefined' ? test : test.skip
     testIfFetch('provide input as URL', async () => {
       const merger = new PDFMerger()
-      const TestfileAURL = new URL('https://raw.githubusercontent.com/nbesli/pdf-merger-js/master/test/fixtures/Testfile_A.pdf')
+      const TestfileAURL = new URL('https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_A.pdf')
       expect(TestfileAURL).toBeInstanceOf(URL)
       await merger.add(TestfileAURL)
-      const TestfileBURL = new URL('https://raw.githubusercontent.com/nbesli/pdf-merger-js/master/test/fixtures/Testfile_B.pdf')
+      const TestfileBURL = new URL('https://github.com/nbesli/pdf-merger-js/raw/master/test/fixtures/Testfile_B.pdf')
       expect(TestfileBURL).toBeInstanceOf(URL)
       await merger.add(TestfileBURL)
       const diff = await pdfDiff(

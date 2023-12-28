@@ -4,8 +4,7 @@ This node.js library can **merge multiple PDF documents**, or parts of them, to 
 
 ## Legacy notes
 
-* If you are searching for the legacy version based on 
-[pdfjs](https://www.npmjs.com/package/pdfjs) please install a [v3 release](https://github.com/nbesli/pdf-merger-js/releases?q=v3&expanded=true). Since [v4](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true) we use [pdf-lib](https://pdf-lib.js.org/) instead.
+* If you are searching for the legacy version based on [pdfjs](https://www.npmjs.com/package/pdfjs) please install a [v3 release](https://github.com/nbesli/pdf-merger-js/releases?q=v3&expanded=true). Since [v4](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true) we use [pdf-lib](https://pdf-lib.js.org/) instead.
 * If you are searching for a legacy version using CommonJS modules please install a [v4 release](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true). Since [v5](https://github.com/nbesli/pdf-merger-js/releases?q=v5&expanded=true) we use the modern ESM ("import") instead of the CommonJS ("require) module standard.
 
 This library is inspired by the [PHP library PDFMerger](https://github.com/myokyawhtun/PDFMerger) and has a very similar API.
@@ -14,7 +13,7 @@ This library is inspired by the [PHP library PDFMerger](https://github.com/myoky
 
 `npm install --save pdf-merger-js`
 
-of global installation if you want to use the cli tool:
+or global installation if you just want to use the cli tool:
 
 `npm install -g pdf-merger-js`
 
@@ -22,7 +21,7 @@ of global installation if you want to use the cli tool:
 
 ### CLI
 
-```
+```txt
 Options:
   -V, --version              output the version number
   -o, --output <outputFile>  Merged PDF output file path

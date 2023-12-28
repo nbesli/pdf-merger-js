@@ -5,17 +5,9 @@
 import path from 'path'
 import fs from 'fs-extra'
 import pdfDiff from 'pdf-diff'
-import fetch from 'node-fetch'
 import { jest } from '@jest/globals'
 
 import PDFMerger from '../browser'
-
-/*
-  add a global `windows.fetch` to mock fetch
-*/
-global.window.fetch = jest.fn().mockImplementation((requestUrl) => {
-  return Promise.resolve(fetch(requestUrl))
-})
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname)
 const FIXTURES_DIR = path.join(__dirname, 'fixtures')
@@ -176,7 +168,8 @@ describe('PDFMerger for browser', () => {
       expect(diff).toBeFalsy()
     })
 
-    test('merge pdfs from urls', async () => {
+    const testIfFetch = typeof fetch !== 'undefined' ? test : test.skip
+    testIfFetch('merge pdfs from urls', async () => {
       const merger = new PDFMerger()
 
       await merger.add(
