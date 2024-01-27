@@ -121,7 +121,8 @@ describe('PDFMerger', () => {
       expect(diff).toBeFalsy()
     })
 
-    test('provide input as URL', async () => {
+    const testIfFetch = typeof fetch !== 'undefined' ? test : test.skip
+    testIfFetch('provide input as URL', async () => {
       const merger = new PDFMerger()
       const TestfileAURL = new URL('https://raw.githubusercontent.com/nbesli/pdf-merger-js/master/test/fixtures/Testfile_A.pdf')
       expect(TestfileAURL).toBeInstanceOf(URL)
