@@ -19,15 +19,20 @@ or global installation if you just want to use the cli tool:
 
 ## Usage
 
-### CLI
+### CLI "pdf-merge"
 
 ```txt
+Usage: pdf-merge [options] <inputFiles...>
+
+merge multiple PDF documents, or parts of them, to a new PDF document
+
 Options:
   -V, --version              output the version number
   -o, --output <outputFile>  Merged PDF output file path
   -v, --verbose              Print verbose output
   -s, --silent               do not print any output to stdout. Overwrites --verbose
   -h, --help                 display help for command
+
 ```
 
 #### Example calls

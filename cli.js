@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs from 'fs-extra'
+import fs from 'fs'
 import { program } from 'commander'
 
 import PDFMerger from './index.js'
@@ -63,6 +63,6 @@ function main (packageJson) {
 }
 
 (() => {
-  const packageJson = fs.readJsonSync(new URL('./package.json', import.meta.url))
+  const packageJson = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
   main(packageJson)
 })()
