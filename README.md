@@ -1,19 +1,19 @@
 # Description
 
-This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. It's only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environment **without any non-javascript dependencies**.
+This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. You can do this by using the **command line interface** or from within your **node.js** or even directly in the **browser**.
+
+The only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environment **without any non-javascript dependencies**.
 
 ## Legacy notes
 
 * If you are searching for the legacy version based on [pdfjs](https://www.npmjs.com/package/pdfjs) please install a [v3 release](https://github.com/nbesli/pdf-merger-js/releases?q=v3&expanded=true). Since [v4](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true) we use [pdf-lib](https://pdf-lib.js.org/) instead.
 * If you are searching for a legacy version using CommonJS modules please install a [v4 release](https://github.com/nbesli/pdf-merger-js/releases?q=v4&expanded=true). Since [v5](https://github.com/nbesli/pdf-merger-js/releases?q=v5&expanded=true) we use the modern ESM ("import") instead of the CommonJS ("require) module standard.
 
-This library is inspired by the [PHP library PDFMerger](https://github.com/myokyawhtun/PDFMerger) and has a very similar API.
-
 ## Installation
 
 `npm install --save pdf-merger-js`
 
-or global installation if you just want to use the cli tool:
+or simply do a global installation if you just want to use the cli tool:
 
 `npm install -g pdf-merger-js`
 
@@ -145,6 +145,7 @@ const Merger = (files) => {
 
 ## Similar libraries
 
+* This library is inspired by the [PHP library PDFMerger](https://github.com/myokyawhtun/PDFMerger) and has a very similar API.
 * [pdf-merge](https://www.npmjs.com/package/pdf-merge) has a dependency on [PDFtk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/).
 * [easy-pdf-merge](https://www.npmjs.com/package/easy-pdf-merge) has a dependency on the [Apache PDFBox® - A Java PDF Library](https://pdfbox.apache.org/).
 * [pdfmerge](https://www.npmjs.com/package/pdfmerge) has a dependency on python and [PyPDF2](https://pythonhosted.org/PyPDF2/).
