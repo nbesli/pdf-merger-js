@@ -1,7 +1,6 @@
 import path from 'path'
 
 import fs from 'fs-extra'
-import Blob from 'cross-blob'
 import pdfDiff from 'pdf-diff'
 import { PDFDocument } from 'pdf-lib'
 import { jest } from '@jest/globals'
@@ -103,7 +102,8 @@ describe('PDFMerger', () => {
       expect(diff).toBeFalsy()
     })
 
-    test('provide input as Blob', async () => {
+    const testIfBlob = typeof Blob !== 'undefined' ? test : test.skip
+    testIfBlob('provide input as Blob', async () => {
       const merger = new PDFMerger()
       const TestfileAUint8Array = await fs.readFile(path.join(FIXTURES_DIR, 'Testfile_A.pdf'))
       const TestfileABlob = new Blob([TestfileAUint8Array])
