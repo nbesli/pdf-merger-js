@@ -162,6 +162,9 @@ export default class PDFMergerBase {
 
     // see https://developer.mozilla.org/en-US/docs/Web/API/URL
     if (input instanceof URL) {
+      if (typeof fetch === 'undefined') {
+        throw new Error('fetch is not defined. You need to use a polyfill for this to work in Node.js.')
+      }
       const res = await fetch(input)
       const aBuffer = await res.arrayBuffer()
       return new Uint8Array(aBuffer)
