@@ -1,6 +1,6 @@
 import { PDFDocument } from 'pdf-lib'
 
-import { parsePagesString } from './parsePagesString'
+import { parsePagesString } from './parsePagesString.js'
 
 /**
  * @typedef {Object} Metadata
@@ -14,10 +14,6 @@ import { parsePagesString } from './parsePagesString'
  * @typedef {Uint8Array | ArrayBuffer | Blob | URL} PdfInput
  */
 
-/**
- * @class PDFMergerBase
- * @classdesc Base class for PDFMerger
- */
 export default class PDFMergerBase {
   /**
    * The internal pdf-lib document.

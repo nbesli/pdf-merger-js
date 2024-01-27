@@ -34,7 +34,7 @@ async function readFixtureAsUint8Array (file) {
 // Note: The browser tests differ from standard as all files are expected
 // to be generated or fetched before being passed into the merger.
 // For testing, they are retrieved with fs.ReadFile() and then passed in.
-describe('PDFMerger', () => {
+describe('PDFMerger for browser', () => {
   beforeAll(async () => {
     await fs.ensureDir(TMP_DIR)
     fileA = await readFixtureAsUint8Array('Testfile_A.pdf')
