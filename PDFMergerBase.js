@@ -155,7 +155,7 @@ export default class PDFMergerBase {
     }
 
     // see https://developer.mozilla.org/en-US/docs/Web/API/Blob
-    if (input instanceof Blob) {
+    if (typeof Blob !== 'undefined' && input instanceof Blob) {
       const aBuffer = await input.arrayBuffer()
       return new Uint8Array(aBuffer)
     }
