@@ -185,7 +185,7 @@ export default class PDFMergerBase {
    * @async
    * @protected
    * @param {PdfInput} input
-   * @param {number[] | undefined} pages - array of page numbers to add (starts at 1)
+   * @param {number[] | undefined} pages - array of page numbers, or start/end index to add (starts at 1)
    * @returns {Promise<void>}
    */
   async _addPagesFromDocument (input, pages = undefined) {
@@ -197,8 +197,18 @@ export default class PDFMergerBase {
       // add the whole document
       indices = srcDoc.getPageIndices()
     } else {
+      const indeterminateStart = pages[0] === -1
+      const indeterminateEnd = pages[pages.length - 1] === -1
       // add selected pages switching to a 0-based index
-      indices = pages.map(p => p - 1)
+      if (indeterminateStart || indeterminateEnd) {
+        // add selected pages switching to a 0-based index
+        const total = srcDoc.getPageCount()
+        indices = indeterminateEnd
+          ? Array.from({ length: total - pages[0] + 1 }, (_, i) => pages[0] + i - 1)
+          : Array.from({ length: pages[1] }, (_, i) => i)
+      } else {
+        indices = pages.map(p => p - 1)
+      }
     }
 
     const copiedPages = await this._doc.copyPages(srcDoc, indices)

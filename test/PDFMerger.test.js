@@ -32,6 +32,20 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
+  test('merge two simple files with ranges', async () => {
+    const merger = new PDFMerger()
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'), '-1')
+    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '2-')
+    await merger.save(path.join(TMP_DIR, 'Testfile_AAB.pdf'))
+
+    const diff = await pdfDiff(
+      path.join(FIXTURES_DIR, 'Testfile_AB.pdf'),
+      path.join(TMP_DIR, 'Testfile_AAB.pdf')
+    )
+
+    expect(diff).toBeFalsy()
+  })
+
   test('reset the internal document', async () => {
     const merger = new PDFMerger()
     await merger.add(path.join(FIXTURES_DIR, 'MergeDemo.pdf'))

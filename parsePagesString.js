@@ -17,7 +17,7 @@ export function parsePagesString (pages) {
   const throwError = () => {
     throw new Error([
       'Invalid parameter "pages".',
-      'Must be a string like "1,2,3" or "1-3" or "1to3"',
+      'Must be a string like "1,2,3" or "1-3" or "1-" or "-3" or "1to3"',
       `Was "${pages}" instead.`
     ].join(' '))
   }
@@ -27,13 +27,24 @@ export function parsePagesString (pages) {
   }
 
   const parseRange = (rangeString) => {
-    const [start, end] = rangeString.split(/-|to/).map(s => typeof s === 'string' ? parseInt(s.trim()) : s)
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+    const [start, end] = rangeString.split(/-|to/).map(s => {
+      if (typeof s !== 'string') {
+        return s
+      }
+
+      const trimmed = s.trim()
+      return trimmed ? parseInt(trimmed) : s
+    })
+    const hasStart = typeof start === 'number'
+    const hasEnd = typeof end === 'number'
+    return (hasStart && hasEnd)
+      ? Array.from({ length: end - start + 1 }, (_, i) => start + i)
+      : hasStart ? [start, -1] : [-1, end]
   }
 
   if (typeof pages !== 'string') {
     throwError()
-  } else if (!pages.trim().replace(/ /g, '').match(/^(\d+|\d+-\d+|\d+to\d+)(,(\d+|\d+-\d+|\d+to\d+))*$/)) {
+  } else if (!pages.trim().replace(/ /g, '').match(/^(\d+|\d+-\d+|\d+-|-\d+|\d+to\d+)(,(\d+|\d+-\d+|\d+to\d+))*$/)) {
     // string does not fit the expected pattern
     throwError()
   } else if (pages.trim().match(/^\d+$/)) {
