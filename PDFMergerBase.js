@@ -199,7 +199,7 @@ export default class PDFMergerBase {
     } else if (pages[0] === 0) {
       // Last page only
       const total = srcDoc.getPageCount()
-      indices = [total - 1]
+      indices = total >= 1 ? [total - 1] : []
     } else {
       const indeterminateStart = pages[0] === -1
       const indeterminateEnd = pages[pages.length - 1] === -1
