@@ -163,6 +163,21 @@ describe('PDFMerger', () => {
       expect(diff).toBeFalsy()
     })
 
+    test('print second last page from a book', async () => {
+      const merger = new PDFMerger()
+
+      const tmpFile = 'Last_AB.pdf'
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '$2')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_A.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
     test('combine pages from multiple books (array)', async () => {
       const merger = new PDFMerger()
       const tmpFile = 'MergeDemo1.pdf'
@@ -240,13 +255,25 @@ describe('PDFMerger', () => {
 
     test('combine pages from multiple books (start-end)', async () => {
       const merger = new PDFMerger()
-      const tmpFile = 'MergeDemo2.pdf'
+
+      let tmpFile = 'MergeDemo2.pdf'
       await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
       await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
       await merger.save(path.join(TMP_DIR, tmpFile))
 
-      const diff = await pdfDiff(
+      let diff = await pdfDiff(
         path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+
+      merger.reset()
+      tmpFile = '123.pdf'
+      await merger.add(path.join(FIXTURES_DIR, '123456789.pdf'), '-$7')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+      diff = await pdfDiff(
+        path.join(FIXTURES_DIR, '123.pdf'),
         path.join(TMP_DIR, tmpFile)
       )
 

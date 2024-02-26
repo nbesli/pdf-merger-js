@@ -16,12 +16,13 @@
  * parsePagesString('9,1-3,5-7') // [9,1,2,3,5,6,7]
  * ```
  */
-export function parsePagesString(pages, lastPagePlaceholder = '$') {
-  const throwError = () => {
+export function parsePagesString (pages, lastPagePlaceholder = '$') {
+  const throwError = (extraInfo) => {
     throw new Error([
       'Invalid parameter "pages".',
       'Must be a string like "1,2,3" or "1-3" or "1-" or "-3" or "1to3"',
-      `Was "${pages}" instead.`
+      `Was "${pages}" instead.`,
+      ...(Array.isArray(extraInfo) ? extraInfo : [extraInfo])
     ].join(' '))
   }
 
@@ -46,14 +47,15 @@ export function parsePagesString(pages, lastPagePlaceholder = '$') {
   }
 
   if (typeof pages !== 'string') {
-    throwError()
+    throwError('parameter is not a string')
   }
 
   const trimmed = pages.trim()
-  if (!trimmed.replace(/ /g, '').match(/^(\$|\d+|\d+-\d+|\d+-|-\d+|\d+to\d+)(,(\d+|\d+-\d+|\d+to\d+))*$/)) {
+
+  if (!trimmed.replace(/ /g, '').match(/^(\$\d*|\d+|\$?\d+-\$?\d+|\$?\d+-|-\$?\d+|\$?\d+to\$?\d+)(,(\$\d*|\d+|\$?\d+-\$?\d+|\$?\d+to\$?\d+))*$/)) {
     // string does not fit the expected pattern
-    throwError()
-  } else if (trimmed.match(/^(\$|\d+)$/)) {
+    throwError('string does not fit the expected pattern')
+  } else if (trimmed.match(/^(\$\d*|\d+)$/)) {
     // string consists of a single page-number
     return [parsePageFromEnd(trimmed) ?? parseInt(trimmed)]
   } else if (trimmed.includes(',')) {
@@ -64,7 +66,7 @@ export function parsePagesString(pages, lastPagePlaceholder = '$') {
     return parseRange(pages)
   }
 
-  throwError()
+  throwError('unsupported type')
 }
 
 /**
@@ -78,8 +80,8 @@ export function parsePagesString(pages, lastPagePlaceholder = '$') {
  * parsePageFromEnd('$2') // -2
  * ```
  */
-export function parsePageFromEnd(pageStr, lastPagePlaceholder = '$') {
-  if (!pageStr.startsWith(lastPagePlaceholder)) {
+export function parsePageFromEnd (pageStr, lastPagePlaceholder = '$') {
+  if (typeof pageStr !== 'string' || !pageStr.startsWith(lastPagePlaceholder)) {
     return null
   }
 
