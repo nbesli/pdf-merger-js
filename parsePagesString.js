@@ -26,10 +26,6 @@ export function parsePagesString (pages, lastPagePlaceholder = '$') {
     ].join(' '))
   }
 
-  const isRangeString = (rangeString) => {
-    return rangeString.includes('-') || rangeString.toLowerCase().includes('to')
-  }
-
   const parseRange = (rangeString) => {
     const [start, end] = rangeString.split(/-|to/).map(s => {
       if (typeof s !== 'string') {
@@ -37,12 +33,12 @@ export function parsePagesString (pages, lastPagePlaceholder = '$') {
       }
 
       const trimmed = s.trim()
-      return trimmed ? (parsePageFromEnd(trimmed) ?? parseInt(trimmed)) : s
+      return trimmed ? (parsePageFromEnd(trimmed, lastPagePlaceholder) ?? parseInt(trimmed)) : s
     })
     const hasStart = typeof start === 'number'
     const hasEnd = typeof end === 'number'
     return (hasStart && hasEnd)
-      ? Array.from({ length: end - start + 1 }, (_, i) => start + i)
+      ? (start < 0 || end < 0) ? [start, end] : Array.from({ length: end - start + 1 }, (_, i) => start + i)
       : hasStart ? [start, -1] : [-1, end]
   }
 
@@ -57,16 +53,20 @@ export function parsePagesString (pages, lastPagePlaceholder = '$') {
     throwError('string does not fit the expected pattern')
   } else if (trimmed.match(/^(\$\d*|\d+)$/)) {
     // string consists of a single page-number
-    return [parsePageFromEnd(trimmed) ?? parseInt(trimmed)]
+    return [parsePageFromEnd(trimmed, lastPagePlaceholder) ?? parseInt(trimmed)]
   } else if (trimmed.includes(',')) {
     // string consists od a list of page-numbers and/or ranges
-    return pages.split(',').flatMap(s => isRangeString(s) ? parseRange(s) : (parsePageFromEnd(s) ?? parseInt(s)))
+    return pages.split(',').flatMap(s => isRangeString(s) ? parseRange(s) : (parsePageFromEnd(s, lastPagePlaceholder) ?? parseInt(s)))
   } else if (isRangeString(pages)) {
     // string consists of a single range
     return parseRange(pages)
   }
 
   throwError('unsupported type')
+}
+
+const isRangeString = (rangeString) => {
+  return rangeString.includes('-') || rangeString.toLowerCase().includes('to')
 }
 
 /**
@@ -81,7 +81,7 @@ export function parsePagesString (pages, lastPagePlaceholder = '$') {
  * ```
  */
 export function parsePageFromEnd (pageStr, lastPagePlaceholder = '$') {
-  if (typeof pageStr !== 'string' || !pageStr.startsWith(lastPagePlaceholder)) {
+  if (typeof pageStr !== 'string' || isRangeString(pageStr) || !pageStr.startsWith(lastPagePlaceholder)) {
     return null
   }
 

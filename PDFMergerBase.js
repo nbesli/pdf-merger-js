@@ -74,16 +74,18 @@ export default class PDFMergerBase {
    */
   async add (input, pages) {
     await this._ensureDoc()
+
     if (typeof pages === 'undefined' || pages === null || pages === 'all') {
       // of no pages are given, add the entire document
+
       await this._addPagesFromDocument(input)
-    } else if (typeof pages === 'number' || (typeof pages === 'string' && pages.startsWith(this._lastPagePlaceholder))) {
-      // e.g. 2
-      await this._addPagesFromDocument(input, [parsePageFromEnd(pages) ?? pages])
     } else if (Array.isArray(pages)) {
       // e.g. [2,3,6] or ["2","3","6"]
       const pagesAsNumbers = pages.map(p => typeof p === 'string' ? (parsePageFromEnd(p) ?? parseInt(p.trim())) : p)
       await this._addPagesFromDocument(input, pagesAsNumbers)
+    } else if (typeof pages === 'number' || (typeof pages === 'string' && new RegExp(`^\\${this._lastPagePlaceholder}\\d*$`).test(pages))) {
+      // e.g. 2
+      await this._addPagesFromDocument(input, [parsePageFromEnd(pages) ?? pages])
     } else if (typeof pages === 'string' || pages instanceof String) {
       // e.g. "2,3,6" or "2-6" or "2to6,8,10-12"
       const pagesArray = parsePagesString(pages, this._lastPagePlaceholder)
@@ -204,41 +206,35 @@ export default class PDFMergerBase {
       const total = srcDoc.getPageCount()
       indices = (total >= Math.abs(pages[0])) ? [total - Math.abs(pages[0])] : srcDoc.getPageIndices()
     } else {
-      const lastPageOnly = pages.length === 1 && pages[0] === -1
-      const indeterminateStart = pages.length > 1 && pages[0] === -1
-      const indeterminateEnd = (pages.length > 1 && pages[pages.length - 1] === -1)
+      const rangeStart = pages[0]
+      const rangeEnd = pages[pages.length - 1]
+
+      const lastPageOnly = pages.length === 1 && rangeStart === -1
+      const indeterminateStart = pages.length > 1 && rangeStart < 0
+      const indeterminateEnd = (pages.length > 1 && rangeEnd < 0)
+
+      const total = srcDoc.getPageCount()
 
       // add selected pages switching to a 0-based index
       if (indeterminateStart || indeterminateEnd) {
         // add selected pages switching to a 0-based index
-        const total = srcDoc.getPageCount()
 
-        let start = indeterminateStart ? 1 : pages[0]
-        let end = indeterminateEnd ? total : pages[pages.length - 1]
+        let start = indeterminateStart ? rangeStart === -1 ? 1 : (total - Math.abs(rangeStart) + 1) : rangeStart
+        let end = indeterminateEnd ? total - Math.abs(rangeEnd) + 1 : rangeEnd
 
-        if (start < 0) {
-          start = total - Math.abs(start)
-        } else {
-          start = start - 1
-        }
-
-        if (end < 0) {
-          end = total - Math.abs(end)
-        } else {
-          end = end - 1
-        }
+        start = start - 1
+        end = end - 1
 
         indices = lastPageOnly
           ? [total - 1]
           : indeterminateEnd
-            ? Array.from({ length: end - start + 1 }, (_, i) => pages[0] + i - 1)
+            ? Array.from({ length: end - start + 1 }, (_, i) => start + i)
             : Array.from({ length: end - start + 1 }, (_, i) => i)
       } else {
-        indices = pages.map(p => p - 1)
+        indices = pages.map(p => (p < 0 ? (total - Math.abs(p) + 1) : p) - 1)
       }
     }
 
-    console.info(`Passing indices: ${JSON.stringify({ pages, indices })}`)
     const copiedPages = await this._doc.copyPages(srcDoc, indices).catch(err => {
       console.error(`Error copying pages: ${err}`)
       return []
