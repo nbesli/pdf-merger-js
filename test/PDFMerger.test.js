@@ -152,7 +152,7 @@ describe('PDFMerger', () => {
       const merger = new PDFMerger()
 
       const tmpFile = 'Last_AB.pdf'
-      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '0')
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '$')
       await merger.save(path.join(TMP_DIR, tmpFile))
 
       const diff = await pdfDiff(

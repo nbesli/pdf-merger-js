@@ -2,6 +2,7 @@
  * Takes a string like "1,2,3" or "1-3" and returns an Array of numbers.
  *
  * @param {string} pages
+ * @param {string} lastPagePlaceholder
  *
  * @example ```js
  * parsePagesString('2') // [2]
@@ -15,7 +16,7 @@
  * parsePagesString('9,1-3,5-7') // [9,1,2,3,5,6,7]
  * ```
  */
-export function parsePagesString (pages) {
+export function parsePagesString (pages, lastPagePlaceholder = '$') {
   const throwError = () => {
     throw new Error([
       'Invalid parameter "pages".',
@@ -35,7 +36,7 @@ export function parsePagesString (pages) {
       }
 
       const trimmed = s.trim()
-      return trimmed ? parseInt(trimmed) : s
+      return trimmed ? (trimmed === lastPagePlaceholder ? -1 : parseInt(trimmed)) : s
     })
     const hasStart = typeof start === 'number'
     const hasEnd = typeof end === 'number'
@@ -46,15 +47,18 @@ export function parsePagesString (pages) {
 
   if (typeof pages !== 'string') {
     throwError()
-  } else if (!pages.trim().replace(/ /g, '').match(/^(\d+|\d+-\d+|\d+-|-\d+|\d+to\d+)(,(\d+|\d+-\d+|\d+to\d+))*$/)) {
+  }
+
+  const trimmed = pages.trim()
+  if (!trimmed.replace(/ /g, '').match(/^(\$|\d+|\d+-\d+|\d+-|-\d+|\d+to\d+)(,(\d+|\d+-\d+|\d+to\d+))*$/)) {
     // string does not fit the expected pattern
     throwError()
-  } else if (pages.trim().match(/^\d+$/)) {
+  } else if (trimmed.match(/^(\$|\d+)$/)) {
     // string consists of a single page-number
-    return [parseInt(pages.trim())]
-  } else if (pages.trim().includes(',')) {
+    return [trimmed === lastPagePlaceholder ? -1 : parseInt(trimmed)]
+  } else if (trimmed.includes(',')) {
     // string consists od a list of page-numbers and/or ranges
-    return pages.split(',').flatMap(s => isRangeString(s) ? parseRange(s) : parseInt(s))
+    return pages.split(',').flatMap(s => isRangeString(s) ? parseRange(s) : parseInt(s === lastPagePlaceholder ? -1 : parseInt(s)))
   } else if (isRangeString(pages)) {
     // string consists of a single range
     return parseRange(pages)

@@ -23,6 +23,8 @@ export default class PDFMergerBase {
    */
   _doc = undefined
 
+  _lastPagePlaceholder = '$'
+
   /**
    * The load options for pdf-lib.
    *
@@ -75,16 +77,16 @@ export default class PDFMergerBase {
     if (typeof pages === 'undefined' || pages === null || pages === 'all') {
       // of no pages are given, add the entire document
       await this._addPagesFromDocument(input)
-    } else if (typeof pages === 'number') {
+    } else if (typeof pages === 'number' || pages === this._lastPagePlaceholder) {
       // e.g. 2
-      await this._addPagesFromDocument(input, [pages])
+      await this._addPagesFromDocument(input, [pages === this._lastPagePlaceholder ? -1 : pages])
     } else if (Array.isArray(pages)) {
       // e.g. [2,3,6] or ["2","3","6"]
-      const pagesAsNumbers = pages.map(p => typeof p === 'string' ? parseInt(p.trim()) : p)
+      const pagesAsNumbers = pages.map(p => typeof p === 'string' ? (p === this._lastPagePlaceholder ? -1 : parseInt(p.trim())) : p)
       await this._addPagesFromDocument(input, pagesAsNumbers)
     } else if (typeof pages === 'string' || pages instanceof String) {
       // e.g. "2,3,6" or "2-6" or "2to6,8,10-12"
-      const pagesArray = parsePagesString(pages)
+      const pagesArray = parsePagesString(pages, this._lastPagePlaceholder)
       await this._addPagesFromDocument(input, pagesArray)
     } else {
       throw new Error([
@@ -185,7 +187,7 @@ export default class PDFMergerBase {
    * @async
    * @protected
    * @param {PdfInput} input
-   * @param {number[] | undefined} pages - array of page numbers, or start/end index to add (starts at 1)
+   * @param {(number | string)[] | undefined} pages - array of page numbers, or start/end index to add (starts at 1)
    * @returns {Promise<void>}
    */
   async _addPagesFromDocument (input, pages = undefined) {
@@ -193,23 +195,27 @@ export default class PDFMergerBase {
     const srcDoc = await PDFDocument.load(src, this._loadOptions)
 
     let indices = []
+
     if (pages === undefined) {
       // add the whole document
       indices = srcDoc.getPageIndices()
-    } else if (pages[0] === 0) {
+    } else if (pages.length === 1 && pages[0] === -1) {
       // Last page only
       const total = srcDoc.getPageCount()
-      indices = total >= 1 ? [total - 1] : []
+      indices = (total >= 1) ? [total - 1] : srcDoc.getPageIndices()
     } else {
-      const indeterminateStart = pages[0] === -1
-      const indeterminateEnd = pages[pages.length - 1] === -1
+      const lastPageOnly = pages.length === 1 && pages[0] === -1
+      const indeterminateStart = pages.length > 1 && pages[0] === -1
+      const indeterminateEnd = (pages.length > 1 && pages[pages.length - 1] === -1)
       // add selected pages switching to a 0-based index
       if (indeterminateStart || indeterminateEnd) {
         // add selected pages switching to a 0-based index
         const total = srcDoc.getPageCount()
-        indices = indeterminateEnd
-          ? Array.from({ length: total - pages[0] + 1 }, (_, i) => pages[0] + i - 1)
-          : Array.from({ length: pages[1] }, (_, i) => i)
+        indices = lastPageOnly
+          ? [total - 1]
+          : indeterminateEnd
+            ? Array.from({ length: total - pages[0] + 1 }, (_, i) => pages[0] + i - 1)
+            : Array.from({ length: pages[1] }, (_, i) => i)
       } else {
         indices = pages.map(p => p - 1)
       }
