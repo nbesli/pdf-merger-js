@@ -7,6 +7,8 @@
  * parsePagesString('2') // [2]
  * parsePagesString('1,2,3') // [1,2,3]
  * parsePagesString('1-3') // [1,2,3]
+ * parsePagesString('2-') // [2, -1]
+ * parsePagesString('-3') // [-1, 3]
  * parsePagesString('1to3') // [1,2,3]
  * parsePagesString('1 to 3') // [1,2,3]
  * parsePagesString('10,1-3') // [10,1,2,3]

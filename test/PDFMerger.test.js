@@ -32,20 +32,6 @@ describe('PDFMerger', () => {
     expect(diff).toBeFalsy()
   })
 
-  test('merge two simple files with ranges', async () => {
-    const merger = new PDFMerger()
-    await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'), '-1')
-    await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '2-')
-    await merger.save(path.join(TMP_DIR, 'Testfile_AAB.pdf'))
-
-    const diff = await pdfDiff(
-      path.join(FIXTURES_DIR, 'Testfile_AB.pdf'),
-      path.join(TMP_DIR, 'Testfile_AAB.pdf')
-    )
-
-    expect(diff).toBeFalsy()
-  })
-
   test('reset the internal document', async () => {
     const merger = new PDFMerger()
     await merger.add(path.join(FIXTURES_DIR, 'MergeDemo.pdf'))
@@ -162,6 +148,21 @@ describe('PDFMerger', () => {
   })
 
   describe('test valid page definitions', () => {
+    test('print last page from a book', async () => {
+      const merger = new PDFMerger()
+
+      const tmpFile = 'Last_AB.pdf'
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '0')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_B.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
     test('combine pages from multiple books (array)', async () => {
       const merger = new PDFMerger()
       const tmpFile = 'MergeDemo1.pdf'
@@ -247,6 +248,20 @@ describe('PDFMerger', () => {
       const diff = await pdfDiff(
         path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
         path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
+    test('combine indeterminate pages from multiple books (start-) or (-end)', async () => {
+      const merger = new PDFMerger()
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'), '-1')
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '2-')
+      await merger.save(path.join(TMP_DIR, 'Testfile_AAB.pdf'))
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_AB.pdf'),
+        path.join(TMP_DIR, 'Testfile_AAB.pdf')
       )
 
       expect(diff).toBeFalsy()
