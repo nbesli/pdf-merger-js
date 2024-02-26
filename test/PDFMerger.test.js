@@ -148,6 +148,36 @@ describe('PDFMerger', () => {
   })
 
   describe('test valid page definitions', () => {
+    test('print last page from a book', async () => {
+      const merger = new PDFMerger()
+
+      const tmpFile = 'Last_AB.pdf'
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '$')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_B.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
+    test('print second last page from a book', async () => {
+      const merger = new PDFMerger()
+
+      const tmpFile = 'Last_AB.pdf'
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '$2')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_A.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
     test('combine pages from multiple books (array)', async () => {
       const merger = new PDFMerger()
       const tmpFile = 'MergeDemo1.pdf'
@@ -223,8 +253,48 @@ describe('PDFMerger', () => {
       expect(diff).toBeFalsy()
     })
 
+    test('combine pages from multiple books with reverse notation (start-)', async () => {
+      const merger = new PDFMerger()
+      const tmpFile = '789.pdf'
+      await merger.add(path.join(FIXTURES_DIR, '123456789.pdf'), '$3-')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, '789.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
+    test('combine pages from multiple books with reverse notation (-end)', async () => {
+      const merger = new PDFMerger()
+      const tmpFile = '123.pdf'
+      await merger.add(path.join(FIXTURES_DIR, '123456789.pdf'), '-$7')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, '123.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
+    test('combine pages from multiple books with reverse notation (start-end)', async () => {
+      const merger = new PDFMerger()
+      const tmpFile = '456.pdf'
+      await merger.add(path.join(FIXTURES_DIR, '123456789.pdf'), '4-$4')
+      await merger.save(path.join(TMP_DIR, tmpFile))
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, '456.pdf'),
+        path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
     test('combine pages from multiple books (start-end)', async () => {
       const merger = new PDFMerger()
+
       const tmpFile = 'MergeDemo2.pdf'
       await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), [1])
       await merger.add(path.join(FIXTURES_DIR, 'UDHR.pdf'), '1-3')
@@ -233,6 +303,20 @@ describe('PDFMerger', () => {
       const diff = await pdfDiff(
         path.join(FIXTURES_DIR, 'MergeDemo.pdf'),
         path.join(TMP_DIR, tmpFile)
+      )
+
+      expect(diff).toBeFalsy()
+    })
+
+    test('combine indeterminate pages from multiple books (start-) or (-end)', async () => {
+      const merger = new PDFMerger()
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_A.pdf'), '-1')
+      await merger.add(path.join(FIXTURES_DIR, 'Testfile_AB.pdf'), '2-')
+      await merger.save(path.join(TMP_DIR, 'Testfile_AAB.pdf'))
+
+      const diff = await pdfDiff(
+        path.join(FIXTURES_DIR, 'Testfile_AB.pdf'),
+        path.join(TMP_DIR, 'Testfile_AAB.pdf')
       )
 
       expect(diff).toBeFalsy()
