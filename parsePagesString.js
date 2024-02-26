@@ -16,7 +16,7 @@
  * parsePagesString('9,1-3,5-7') // [9,1,2,3,5,6,7]
  * ```
  */
-export function parsePagesString (pages, lastPagePlaceholder = '$') {
+export function parsePagesString(pages, lastPagePlaceholder = '$') {
   const throwError = () => {
     throw new Error([
       'Invalid parameter "pages".',
@@ -36,7 +36,7 @@ export function parsePagesString (pages, lastPagePlaceholder = '$') {
       }
 
       const trimmed = s.trim()
-      return trimmed ? (trimmed === lastPagePlaceholder ? -1 : parseInt(trimmed)) : s
+      return trimmed ? (parsePageFromEnd(trimmed) ?? parseInt(trimmed)) : s
     })
     const hasStart = typeof start === 'number'
     const hasEnd = typeof end === 'number'
@@ -55,14 +55,33 @@ export function parsePagesString (pages, lastPagePlaceholder = '$') {
     throwError()
   } else if (trimmed.match(/^(\$|\d+)$/)) {
     // string consists of a single page-number
-    return [trimmed === lastPagePlaceholder ? -1 : parseInt(trimmed)]
+    return [parsePageFromEnd(trimmed) ?? parseInt(trimmed)]
   } else if (trimmed.includes(',')) {
     // string consists od a list of page-numbers and/or ranges
-    return pages.split(',').flatMap(s => isRangeString(s) ? parseRange(s) : parseInt(s === lastPagePlaceholder ? -1 : parseInt(s)))
+    return pages.split(',').flatMap(s => isRangeString(s) ? parseRange(s) : (parsePageFromEnd(s) ?? parseInt(s)))
   } else if (isRangeString(pages)) {
     // string consists of a single range
     return parseRange(pages)
   }
 
   throwError()
+}
+
+/**
+ * Takes a string like "$" or "$2" and returns the corresponding transformation in reverse notion (from the last page).
+ *
+ * @param {string} pageStr
+ * @param {string} lastPagePlaceholder
+ *
+ * @example ```js
+ * parsePageFromEnd('$') // -1
+ * parsePageFromEnd('$2') // -2
+ * ```
+ */
+export function parsePageFromEnd(pageStr, lastPagePlaceholder = '$') {
+  if (!pageStr.startsWith(lastPagePlaceholder)) {
+    return null
+  }
+
+  return -1 * (pageStr.length <= 1 ? 1 : parseInt(pageStr.substring(1).trim()))
 }
