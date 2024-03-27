@@ -5,7 +5,7 @@
 //                 Lukas Loeffler <https://github.com/LukasLoeffler>
 
 declare module "pdf-merger-js/browser" {
-  class PDFMerger {
+  export class PDFMerger {
     constructor();
     /**
      * Resets the internal state of the document, to start again.
@@ -54,9 +54,8 @@ declare module "pdf-merger-js/browser" {
      */
     setMetadata(metadata: Metadata): Promise<void>;
   }
-
-  export = PDFMerger;
 }
+export = PDFMerger;
 
 declare type PdfInput = Uint8Array | ArrayBuffer | Blob | URL | File | String | string;
 

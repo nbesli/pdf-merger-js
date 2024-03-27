@@ -5,7 +5,7 @@
 import { PathLike } from "fs-extra";
 
 declare module "pdf-merger-js" {
-  class PDFMerger {
+  export class PDFMerger {
     constructor();
     /**
      * Resets the internal state of the document, to start again.
@@ -46,8 +46,9 @@ declare module "pdf-merger-js" {
      */
     setMetadata(metadata: Metadata): Promise<void>;
   }
-  export = PDFMerger;
+
 }
+export default PDFMerger;
 
 declare type PdfInput = Uint8Array | ArrayBuffer | Blob | URL | Buffer | String | PathLike | string;
 
