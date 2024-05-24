@@ -16,6 +16,8 @@ describe('parsePagesString', () => {
     expect(parsePagesString(' 1-3 ')).toStrictEqual([1, 2, 3])
     expect(parsePagesString(' 1 - 3 ')).toStrictEqual([1, 2, 3])
     expect(parsePagesString('2-6')).toStrictEqual([2, 3, 4, 5, 6])
+    expect(parsePagesString('2-')).toStrictEqual([2, -1])
+    expect(parsePagesString('-2')).toStrictEqual([-1, 2])
   })
 
   test('should parse range with "to"', () => {
@@ -44,7 +46,6 @@ describe('parsePagesString', () => {
     expect(() => parsePagesString('-1to-3')).toThrow()
     expect(() => parsePagesString('1--3')).toThrow()
     expect(() => parsePagesString('1 until 3')).toThrow()
-    expect(() => parsePagesString('1-')).toThrow()
     expect(() => parsePagesString('10e3')).toThrow()
   })
 })
