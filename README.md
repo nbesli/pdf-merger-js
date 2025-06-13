@@ -74,7 +74,7 @@ var merger = new PDFMerger();
     producer: "pdf-merger-js based script",
     author: "John Doe",
     creator: "John Doe",
-    title: "My live as John Doe"
+    title: "My life as John Doe"
   });
 
   await merger.save('merged.pdf'); //save under given name and reset the internal document
