@@ -40,11 +40,11 @@ export default class PDFMergerBase {
    *
    * @param { import('@cantoo/pdf-lib').LoadOptions } loadOptions
    */
-    constructor (loadOptions = {}) {
-      this._loadOptions = {
-        ...this._loadOptions,
-        ...loadOptions
-      }
+  constructor (loadOptions = {}) {
+    this._loadOptions = {
+      ...this._loadOptions,
+      ...loadOptions
+    }
     this.reset()
   }
 
