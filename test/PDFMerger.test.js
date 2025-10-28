@@ -2,7 +2,7 @@ import path from 'path'
 
 import fs from 'fs-extra'
 import pdfDiff from 'pdf-diff'
-import { PDFDocument } from 'pdf-lib'
+import { PDFDocument } from '@cantoo/pdf-lib'
 import { jest } from '@jest/globals'
 
 import PDFMerger from '../index'

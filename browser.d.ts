@@ -6,7 +6,12 @@
 
 declare module "pdf-merger-js/browser" {
   class PDFMerger {
-    constructor();
+    /**
+     * Class constructor
+     *
+     * @param { import('@cantoo/pdf-lib').LoadOptions } loadOptions
+     */
+        constructor(loadOptions: import('@cantoo/pdf-lib').LoadOptions);
     /**
      * Resets the internal state of the document, to start again.
      *
