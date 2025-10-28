@@ -1,4 +1,4 @@
-import { PDFDocument } from 'pdf-lib'
+import { PDFDocument } from '@cantoo/pdf-lib'
 
 import { parsePagesString } from './parsePagesString.js'
 
@@ -26,15 +26,25 @@ export default class PDFMergerBase {
   /**
    * The load options for pdf-lib.
    *
-   * @type { import('pdf-lib').LoadOptions }
+   * @type { import('@cantoo/pdf-lib').LoadOptions }
    * @protected
    */
   _loadOptions = {
     // allow merging of encrypted pdfs (issue #88)
-    ignoreEncryption: true
+    ignoreEncryption: true,
+    password: ''
   }
 
-  constructor () {
+  /**
+   * Default constructor
+   *
+   * @param { import('@cantoo/pdf-lib').LoadOptions } loadOptions
+   */
+  constructor (loadOptions = {}) {
+    this._loadOptions = {
+      ...this._loadOptions,
+      ...loadOptions
+    }
     this.reset()
   }
 

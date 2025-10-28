@@ -2,7 +2,7 @@
 
 This node.js library can **merge multiple PDF documents**, or parts of them, to one new PDF document. You can do this by using the **command line interface** or from within your **node.js** or even directly in the **browser**.
 
-The only dependency is [pdf-lib](https://pdf-lib.js.org/) so it can run in any javascript-only environment **without any non-javascript dependencies**.
+The only dependency is [@cantoo/pdf-lib](https://www.npmjs.com/package/@cantoo/pdf-lib) so it can run in any javascript-only environment **without any non-javascript dependencies**.
 
 ## Legacy notes
 
